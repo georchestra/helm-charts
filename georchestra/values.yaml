@@ -120,9 +120,9 @@ georchestra:
           cpu: 2000m
           memory: 1512Mi
       ogc_api_records:
-        enabled: true
+        enabled: false
         replicaCount: "1"
-        image: georchestra/gn-cloud-ogc-api-records-service:4.2.8
+        image: geonetwork/gn-cloud-ogc-api-records-service:4.4.7-0
         extra_environment: []
         envsubst:
           enabled: true
