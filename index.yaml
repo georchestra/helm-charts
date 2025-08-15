@@ -1,5 +1,16 @@
 apiVersion: v1
 entries:
+  datadirsync:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2025-08-15T22:34:41.986854502Z"
+    description: A Helm chart to deploy datadirsync-k8s-agent
+    digest: 9f9260dc87d468959e6f91edabba66e416225cceadbe04a00f73275f5f230ab4
+    name: datadirsync
+    type: application
+    urls:
+    - https://github.com/georchestra/helm-charts/releases/download/datadirsync-1.0.0/datadirsync-1.0.0.tgz
+    version: 1.0.0
   georchestra:
   - apiVersion: v2
     appVersion: "24.0"
@@ -4081,4 +4092,4 @@ entries:
     urls:
     - https://github.com/georchestra/helm-charts/releases/download/maelstro-0.2.0/maelstro-0.2.0.tgz
     version: 0.2.0
-generated: "2025-07-24T11:57:49.847757791Z"
+generated: "2025-08-15T22:34:41.987504332Z"
