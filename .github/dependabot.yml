@@ -8,6 +8,10 @@ updates:
     directory: "/maelstro"
     schedule:
       interval: "weekly"
+  - package-ecosystem: "helm"
+    directory: "/datadirsync"
+    schedule:
+      interval: "weekly"
   - package-ecosystem: github-actions
     directory: /
     schedule:
