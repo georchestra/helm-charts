@@ -376,16 +376,6 @@ georchestra:
         memory: 64Mi
       limits:
         memory: 64Mi
-  datadirsync:
-    enabled: false
-    image: georchestra/datadirsync-k8s-agent:1.4.1
-    pollInterval: 30
-    tolerations: []
-    # when using wildcard, you need to use "", otherwise it's not necessary
-    # rolloutDeploymentsMapping:
-    #  "*":
-    #    - geoserver
-    # registry_secret: default
 
 fqdn: "georchestra-127-0-1-1.traefik.me"
 
@@ -554,6 +544,6 @@ tooling:
     podAnnotations: {}
 
 
-# Annotations for all pods, can be merge/override for each webapp, and also smtp smarthost, datadirsync and rabbitmq
+# Annotations for all pods, can be merge/override for each webapp, and also smtp smarthost and rabbitmq
 # For builtin database use them under database.primary
 podAnnotations: {}
