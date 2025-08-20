@@ -71,8 +71,8 @@ datadir:
   - name: georchestra-datadir
     emptyDir: {}
   image:
-    repository: bitnami/git
-    tag: latest
+    repository: alpine/git
+    tag: 2.49.1
 
   git:
     url: https://github.com/georchestra/datadir.git

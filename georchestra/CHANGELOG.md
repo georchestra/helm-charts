@@ -1,3 +1,9 @@
+# 1.10.0
+
+- For the Helm dependencies, switch from bitnamicharts to bitnamichartslegacy due to https://github.com/bitnami/containers/issues/83267
+- Update ogc api records version and disable by default (#170)
+- Remove datadirsync templates from Georchestra chart itself. Datadirsync now is a chart! (#172)
+
 # 1.9.0
 
 - Add ability to set podAnnotations (#156)
