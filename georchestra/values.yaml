@@ -434,7 +434,7 @@ database:
     database: georchestra
     # If using an existing secret: this one will both be used by the bitnami chart managing the DB
     # and by the georchestra db secret
-    # (https://github.com/georchestra/helm-charts/blob/main/templates/database/database-georchestra-secret.yaml)
+    # (https://github.com/georchestra/helm-charts/blob/main/georchestra/templates/database/database-georchestra-secret.yaml)
     # that is used by the apps
     # So you must be quite careful. It should follow the pattern from the previsouly mentioned secret
     # and tell the bitnami chart which variable provide the user and password
