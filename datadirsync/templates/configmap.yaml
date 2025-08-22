@@ -10,7 +10,8 @@ data:
 {{- range $key, $values := $agent.rolloutDeploymentsMapping }}
     "{{ $key }}":
 {{- range $values }}
-      - {{ $fullname }}-{{ . }}
+      - {{ . }}
 {{- end }}
 {{- end }}
 {{- end }}
+

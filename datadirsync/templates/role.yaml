@@ -9,14 +9,13 @@ rules:
   - apiGroups: ["apps"]
     resources: ["pods", "replicasets", "deployments"]
     resourceNames:
-      {{- $prefix := include "datadirsync.fullname" . -}}
       {{- $deployments := list -}}
       {{- range $key, $values := $agent.rolloutDeploymentsMapping }}
         {{- $deployments = concat $deployments $values }}
       {{- end }}
       {{- $deployments = mustUniq $deployments }}
       [{{- range $index, $item := $deployments }}
-        {{- if $index }}, {{ end }}"{{ printf "%s-%s" $prefix $item }}"
+        {{- if $index }}, {{ end }}"{{ $item }}"
       {{- end }}]
     verbs: ["get", "patch"]
 {{- end }}
