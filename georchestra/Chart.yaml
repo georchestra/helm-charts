@@ -30,7 +30,7 @@ dependencies:
   condition: database.builtin
   alias: database
 - name: rabbitmq
-  version: 14.4.0
+  version: 16.0.13
   repository: "oci://registry-1.docker.io/bitnamichartslegacy"
   condition: rabbitmq.enabled, rabbitmq.builtin
   alias: rabbitmq
