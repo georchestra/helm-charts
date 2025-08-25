@@ -120,3 +120,8 @@ database:
     password: georchestra
     # here specify the name of the secret to use
     # existingSecret: mysecret
+mount_datadir:
+  name_pvc_geonetwork_datadir: georchestra-geonetwork-datadir
+  name_pvc_geoserver_datadir: georchestra-geoserver-datadir
+  name_pvc_mapstore_datadir: georchestra-mapstore-datadir
+
