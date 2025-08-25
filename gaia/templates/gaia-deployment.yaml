@@ -69,18 +69,34 @@ spec:
           volumeMounts:
             - name: georchestra-datadir
               mountPath: /etc/georchestra
-            - name: georchestra-datadir
+            - name: gaia-gunicorn
               mountPath: /geordash/gunicorn.conf.py
               subPath: gaia/gunicorn.conf.py
-            - name: georchestra-datadir
+            - name: gaia-config
               mountPath: /geordash/config.py
               subPath: gaia/config.py
-            - name: georchestra-datadir
+            - name: gaia-celeryconfig
               mountPath: /geordash/geordash/celeryconfig.py
               subPath: gaia/celeryconfig.py
+            - mountPath: /mnt/geonetwork_datadir
+              name: geonetwork-datadir
+            - mountPath: /mnt/geoserver_datadir
+              name: geoserver-datadir
+            - mountPath: /mnt/mapstore_datadir
+              name: mapstore-datadir
       volumes:
         - name: georchestra-datadir
           emptyDir: {}
+        - name: geonetwork-datadir
+          persistentVolumeClaim:
+            claimName: {{ .Values.mount_datadir.name_pvc_geonetwork_datadir }}
+        - name: geoserver-datadir
+          persistentVolumeClaim:
+            claimName: {{ .Values.mount_datadir.name_pvc_geoserver_datadir }}
+        - name: mapstore-datadir
+          persistentVolumeClaim:
+            claimName: {{ .Values.mount_datadir.name_pvc_mapstore_datadir }}
+
         {{- if .Values.datadir.git.ssh_secret }}
         - name: ssh-secret
           secret:
