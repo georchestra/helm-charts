@@ -94,7 +94,7 @@ redis:
   redis_data:
     # pv_name: redis_data
     size: 1Gi
-    #storage_class_name: default or "-" for empty storageClassName
+    # storage_class_name: default or "-" for empty storageClassName
     accessModes:
     - ReadWriteOnce
 datadir:
