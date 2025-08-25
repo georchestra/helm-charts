@@ -94,7 +94,7 @@ redis:
   redis_data:
     # pv_name: redis_data
     size: 1Gi
-     #storage_class_name: default or "-" for empty storageClassName
+    #storage_class_name: default or "-" for empty storageClassName
     accessModes:
     - ReadWriteOnce
 datadir:
@@ -124,4 +124,3 @@ mount_datadir:
   name_pvc_geonetwork_datadir: georchestra-geonetwork-datadir
   name_pvc_geoserver_datadir: georchestra-geoserver-datadir
   name_pvc_mapstore_datadir: georchestra-mapstore-datadir
-
