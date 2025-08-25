@@ -1,9 +1,9 @@
 dependencies:
 - name: postgresql
   repository: oci://registry-1.docker.io/bitnamichartslegacy
-  version: 15.5.2
+  version: 16.7.26
 - name: rabbitmq
   repository: oci://registry-1.docker.io/bitnamichartslegacy
   version: 14.4.0
-digest: sha256:0d041037017b3f7e67ac69590f792c27688a2dfd4145f564a0034e9bf97a300b
-generated: "2025-08-20T14:08:03.980699455+02:00"
+digest: sha256:f9d1b495196c9dcb51232d757d90c27434c50255359b1a1aa05a551d22075014
+generated: "2025-08-25T01:21:26.289636949Z"
