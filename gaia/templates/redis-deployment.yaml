@@ -64,6 +64,13 @@ spec:
           {{- with .Values.redis.extra_environment }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          volumeMounts:
+            - name: redis-data
+              mountPath: /data
+      volumes:
+        - name: redis-data
+          persistentVolumeClaim:
+            claimName: {{ include "helm-gaia.fullname" . }}-redis-data
       {{- with .Values.redis.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

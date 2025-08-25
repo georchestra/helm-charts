@@ -91,6 +91,12 @@ redis:
     requests:
       cpu: 100m
       memory: 128Mi
+  redis_data:
+    # pv_name: redis_data
+    size: 1Gi
+     #storage_class_name: default or "-" for empty storageClassName
+    accessModes:
+    - ReadWriteOnce
 datadir:
   volume:
   - name: georchestra-datadir
