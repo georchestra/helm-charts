@@ -39,7 +39,6 @@ spec:
           {{- if .Values.redis.custom_liveness_probe -}}
           {{ .Values.redis.custom_liveness_probe | toYaml | nindent 12 }}
           {{- else }}
-          livenessProbe:
             tcpSocket:
               port: redis
             initialDelaySeconds: 30
