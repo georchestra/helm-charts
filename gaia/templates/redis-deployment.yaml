@@ -23,8 +23,6 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      securityContext:
-        {{- toYaml .Values.redis.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}-redis
           securityContext:
