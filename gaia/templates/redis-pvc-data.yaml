@@ -4,7 +4,7 @@ metadata:
   name: {{ include "helm-gaia.fullname" . }}-redis-data
   labels:
     {{- include "helm-gaia.labels" . | nindent 4 }}
-    app.kubernetes.io/component: {{ include "helm-gaia.fullname" . }}-ldap
+    app.kubernetes.io/component: {{ include "helm-gaia.fullname" . }}-redis-data
     helm.sh/resource-policy: "keep"
 spec:
   accessModes:
