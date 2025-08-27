@@ -89,13 +89,13 @@ spec:
           emptyDir: {}
         - name: geonetwork-datadir
           persistentVolumeClaim:
-            claimName: {{ .Values.mount_datadir.name_pvc_geonetwork_datadir }}
+            claimName: {{ .Values.volumes.geonetworkDatadir.name }}
         - name: geoserver-datadir
           persistentVolumeClaim:
-            claimName: {{ .Values.mount_datadir.name_pvc_geoserver_datadir }}
+            claimName: {{ .Values.volumes.geoserverDatadir.name }}
         - name: mapstore-datadir
           persistentVolumeClaim:
-            claimName: {{ .Values.mount_datadir.name_pvc_mapstore_datadir }}
+            claimName: {{ .Values.volumes.mapstoreDatadir.name }}
 
         {{- if .Values.datadir.git.ssh_secret }}
         - name: ssh-secret
