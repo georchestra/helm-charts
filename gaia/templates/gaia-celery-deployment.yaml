@@ -49,8 +49,8 @@ spec:
                 - "-c"
                 - "celery inspect ping "
             initialDelaySeconds: 30
-            timeoutSeconds: 10
-            periodSeconds: 60
+            timeoutSeconds: 100
+            periodSeconds: 360
           {{- end }}
           readinessProbe:
             exec:
