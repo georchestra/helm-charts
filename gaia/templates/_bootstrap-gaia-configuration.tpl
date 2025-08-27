@@ -82,35 +82,35 @@ Insert service host environment variables
 - name: FQDN
   value: "{{ .Values.georchestra.fqdn }}"
 - name: ANALYTICS_HOST
-  value: "{{ .Values.georchestra.fullname }}-analytics-svc"
+  value: "{{ .Values.georchestra.releaseName }}-analytics-svc"
 - name: CAS_HOST
-  value: "{{ .Values.georchestra.fullname }}-cas-svc"
+  value: "{{ .Values.georchestra.releaseName }}-cas-svc"
 - name: CONSOLE_HOST
-  value: "{{ .Values.georchestra.fullname }}-console-svc"
+  value: "{{ .Values.georchestra.releaseName }}-console-svc"
 - name: GEONETWORK_HOST
-  value: "{{ .Values.georchestra.fullname }}-geonetwork-svc"
+  value: "{{ .Values.georchestra.releaseName }}-geonetwork-svc"
 - name: GEOSERVER_HOST
-  value: "{{ .Values.georchestra.fullname }}-geoserver-svc"
+  value: "{{ .Values.georchestra.releaseName }}-geoserver-svc"
 - name: HEADER_HOST
-  value: "{{ .Values.georchestra.fullname }}-header-svc"
+  value: "{{ .Values.georchestra.releaseName }}-header-svc"
 - name: GEOWEBCACHE_HOST
-  value: "{{ .Values.georchestra.fullname }}-geowebcache-svc"
+  value: "{{ .Values.georchestra.releaseName }}-geowebcache-svc"
 - name: MAPSTORE_HOST
-  value: "{{ .Values.georchestra.fullname }}-mapstore-svc"
+  value: "{{ .Values.georchestra.releaseName }}-mapstore-svc"
 - name: DATAFEEDER_HOST
-  value: "{{ .Values.georchestra.fullname }}-datafeeder-svc"
+  value: "{{ .Values.georchestra.releaseName }}-datafeeder-svc"
 - name: IMPORT_HOST
-  value: "{{ .Values.georchestra.fullname }}-import-svc"
+  value: "{{ .Values.georchestra.releaseName }}-import-svc"
 - name: DATAHUB_HOST
   value: "datahub-datahub-svc"
 - name: OGC_API_RECORDS_HOST
-  value: "{{ .Values.georchestra.fullname }}-gn4-ogc-api-records-svc"
+  value: "{{ .Values.georchestra.releaseName }}-gn4-ogc-api-records-svc"
 - name: ES_HOST
-  value: "{{ .Values.georchestra.fullname }}-gn4-elasticsearch-svc"
+  value: "{{ .Values.georchestra.releaseName }}-gn4-elasticsearch-svc"
 - name: ES_PORT
   value: "9200"
 - name: KB_HOST
-  value: "{{ .Values.georchestra.fullname }}-gn4-kibana-svc"
+  value: "{{ .Values.georchestra.releaseName }}-gn4-kibana-svc"
 - name: KB_PORT
   value: "5601"
 {{- end }}

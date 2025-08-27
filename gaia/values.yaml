@@ -109,7 +109,7 @@ datadir:
     url: https://github.com/georchestra/datadir.git
     ref: docker-master
 georchestra:
-  fullname: georchestra
+  releaseName: georchestra
   fqdn: georchestra-127-0-0-1.nip.io
 database:
   auth:
@@ -120,7 +120,11 @@ database:
     password: georchestra
     # here specify the name of the secret to use
     # existingSecret: mysecret
-mount_datadir:
-  name_pvc_geonetwork_datadir: georchestra-geonetwork-datadir
-  name_pvc_geoserver_datadir: georchestra-geoserver-datadir
-  name_pvc_mapstore_datadir: georchestra-mapstore-datadir
+
+volumes:
+  geonetworkDatadir:
+    name: georchestra-geonetwork-datadir
+  geoserverDatadir:
+    name: georchestra-geoserver-datadir
+  mapstoreDatadir:
+    name: georchestra-mapstore-datadir
