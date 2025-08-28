@@ -8,3 +8,4 @@ chart-dirs:
   - .
 excluded-charts:
   - maelstro
+  - gaia
