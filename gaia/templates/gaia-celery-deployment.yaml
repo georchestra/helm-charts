@@ -47,7 +47,7 @@ spec:
               command:
                 - "/bin/bash"
                 - "-c"
-                - "celery inspect ping "
+                - "python3 -m celery inspect ping "
             initialDelaySeconds: 30
             timeoutSeconds: 100
             periodSeconds: 360
@@ -57,7 +57,7 @@ spec:
               command:
                 - "/bin/bash"
                 - "-c"
-                - "celery inspect ping "
+                - "python3 -m celery inspect ping "
             initialDelaySeconds: 30
             timeoutSeconds: 10
             periodSeconds: 10
