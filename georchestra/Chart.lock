@@ -1,9 +1,9 @@
 dependencies:
 - name: postgresql
-  repository: oci://registry-1.docker.io/bitnamichartslegacy
+  repository: oci://ghcr.io/georchestra/bitnami-helm-charts
   version: 15.5.2
 - name: rabbitmq
-  repository: oci://registry-1.docker.io/bitnamichartslegacy
+  repository: oci://ghcr.io/georchestra/bitnami-helm-charts
   version: 14.4.0
-digest: sha256:0d041037017b3f7e67ac69590f792c27688a2dfd4145f564a0034e9bf97a300b
-generated: "2025-08-20T14:08:03.980699455+02:00"
+digest: sha256:ccc78c2bf311b8d0fa8045bc0554e01ffaf52bd4bb9aaf7fefada5543055d464
+generated: "2025-09-01T11:05:34.650331473+02:00"
