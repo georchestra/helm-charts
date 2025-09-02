@@ -6,6 +6,7 @@ Here is the list:
 - [geOrchestra](./georchestra/): Official Helm chart to install geOrchestra in Kubernetes.
 - [Maelstro](./maelstro/): For deploying [Maelstro](https://github.com/georchestra/maelstro)
 - [datadirSync](./datadirsync/): For deploying [datadirsync-k8s-agent](https://github.com/georchestra/datadirsync-k8s-agent/).
+- [Gaia](./gaia/): For deploying [Gaia](https://github.com/georchestra/gaia)
 
 # WARNING: New structure for the Helm charts
 
