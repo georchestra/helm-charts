@@ -1,6 +1,6 @@
 # 1.11.0
 
-Move away from Bitnami Docker images and migrate Bitnami helm charts to our Docker registry.
+Migrate Bitnami helm charts to our Docker registry.
 
 # 1.10.0
 
