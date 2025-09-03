@@ -1,3 +1,7 @@
+# 1.11.0
+
+Migrate Bitnami helm charts to our Docker registry.
+
 # 1.10.0
 
 - For the Helm dependencies, switch from bitnamicharts to bitnamichartslegacy due to https://github.com/bitnami/containers/issues/83267
