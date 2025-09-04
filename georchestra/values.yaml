@@ -377,7 +377,7 @@ georchestra:
       limits:
         memory: 64Mi
 
-fqdn: "georchestra-127-0-1-1.traefik.me"
+fqdn: "georchestra-127-0-0-1.nip.io"
 
 ingress:
   enabled: true
