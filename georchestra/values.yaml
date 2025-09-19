@@ -367,8 +367,8 @@ georchestra:
     # relay_username:  aaaa
     # relay_password:  aaaa
     image:
-      repository: camptocamp/exim
-      tag: latest
+      repository: georchestra/exim
+      tag: 20250919
     extra_environment: []
     resources:
       requests:
