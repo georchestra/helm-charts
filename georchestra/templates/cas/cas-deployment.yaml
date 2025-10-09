@@ -59,6 +59,9 @@ spec:
           periodSeconds: 60
         resources:
           {{- toYaml $webapp.resources | nindent 10 }}
+      {{- if $webapp.extraContainers }}
+        {{ toYaml $webapp.extraContainers | nindent 6 }}
+      {{- end }}
       volumes:
       - name: georchestra-datadir
         emptyDir: {}

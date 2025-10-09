@@ -64,6 +64,9 @@ spec:
             name: gn4-kibana-config
         resources:
           {{- toYaml $webapp.resources | nindent 10 }}
+      {{- if $webapp.extraContainers }}
+        {{ toYaml $webapp.extraContainers | nindent 6 }}
+      {{- end }}
       volumes:
       - name: gn4-kibana-config
         configMap:
