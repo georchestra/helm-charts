@@ -66,20 +66,15 @@ spec:
           - mountPath: /etc/georchestra
             name: georchestra-datadir
         livenessProbe:
-          httpGet:
-            path: /
+          tcpSocket:
             port: 8080
-          periodSeconds: 10
-          timeoutSeconds: 5
           failureThreshold: 5
-          successThreshold: 1
+          periodSeconds: 15
         startupProbe:
-          httpGet:
-            path: /
+          tcpSocket:
             port: 8080
-          periodSeconds: 10
-          failureThreshold: 10
-          timeoutSeconds: 3
+          failureThreshold: 5
+          periodSeconds: 15
         resources:
           {{- toYaml $webapp.resources | nindent 10 }}
       volumes:
