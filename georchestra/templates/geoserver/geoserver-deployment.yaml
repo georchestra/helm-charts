@@ -200,6 +200,7 @@ spec:
             httpHeaders:
             - name: ctrl-flow-priority
               value: "10"
+          failureThreshold: 10
           periodSeconds: 10
           timeoutSeconds: 5
         resources:
