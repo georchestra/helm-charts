@@ -194,10 +194,12 @@ spec:
           timeoutSeconds: 5
         {{- end }}
         startupProbe:
-          tcpSocket:
-            port: 8080
-          failureThreshold: 5
-          periodSeconds: 40
+          httpGet:
+            path: /geoserver/ows?SERVICE=WMS&REQUEST=DescribeLayer&LAYERS=geor:public_layer&VERSION=1.1.1
+            port: http
+            scheme: HTTP
+          failureThreshold: 60
+          periodSeconds: 5
         resources:
           {{- toYaml $webapp.resources | nindent 10 }}
       volumes:
