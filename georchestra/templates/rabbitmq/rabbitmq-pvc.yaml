@@ -1,6 +1,6 @@
 {{- $rabbitmq := .Values.rabbitmq -}}
 {{- $rabbitmq_storage := .Values.rabbitmq.storage -}}
-{{- if and $rabbitmq.enabled $rabbitmq.storage -}}
+{{- if and $rabbitmq.enabled (not $rabbitmq.auth.host) -}}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -14,6 +14,8 @@ spec:
   {{- range $rabbitmq_storage.accessModes }}
   - {{ . | quote }}
   {{- end }}
+  {{- else }}
+  - "ReadWriteOnce"
   {{- end }}
   {{- if (eq "-" $rabbitmq_storage.storage_class_name) }}
   storageClassName: ""
