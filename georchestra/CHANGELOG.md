@@ -1,3 +1,9 @@
+# 1.13.0
+
+- Complete removal of Bitnami rabbitmq (#188):  
+  BREAKING CHANGE: You may need to remove the old Bitnami rabbitmq ressources. In favor of the new ones.
+- Adapt healthchecks for GeoServer (#187) and SP
+
 # 1.11.0
 
 Migrate Bitnami helm charts to our Docker registry.
