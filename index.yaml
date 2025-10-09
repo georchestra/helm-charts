@@ -35,6 +35,22 @@ entries:
   georchestra:
   - apiVersion: v2
     appVersion: "25.0"
+    created: "2025-10-09T16:48:11.325039989Z"
+    dependencies:
+    - alias: database
+      condition: database.builtin
+      name: postgresql
+      repository: oci://ghcr.io/georchestra/bitnami-helm-charts
+      version: 15.5.2
+    description: A Helm chart to deploy geOrchestra instances into k8s clusters.
+    digest: e6d36b93f1ff114f1abf572aae8a3fc17c2cf0cb563be348965ffff4b4e491a2
+    name: georchestra
+    type: application
+    urls:
+    - https://github.com/georchestra/helm-charts/releases/download/georchestra-1.13.3/georchestra-1.13.3.tgz
+    version: 1.13.3
+  - apiVersion: v2
+    appVersion: "25.0"
     created: "2025-10-09T16:23:05.206313165Z"
     dependencies:
     - alias: database
@@ -4286,4 +4302,4 @@ entries:
     urls:
     - https://github.com/georchestra/helm-charts/releases/download/maelstro-0.2.0/maelstro-0.2.0.tgz
     version: 0.2.0
-generated: "2025-10-09T16:23:05.207279457Z"
+generated: "2025-10-09T16:48:11.32578667Z"
