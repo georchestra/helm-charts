@@ -29,8 +29,3 @@ dependencies:
   repository: "oci://ghcr.io/georchestra/bitnami-helm-charts"
   condition: database.builtin
   alias: database
-- name: rabbitmq
-  version: 14.4.0
-  repository: "oci://ghcr.io/georchestra/bitnami-helm-charts"
-  condition: rabbitmq.enabled, rabbitmq.builtin
-  alias: rabbitmq

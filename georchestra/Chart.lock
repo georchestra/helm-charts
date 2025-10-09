@@ -2,8 +2,5 @@ dependencies:
 - name: postgresql
   repository: oci://ghcr.io/georchestra/bitnami-helm-charts
   version: 15.5.2
-- name: rabbitmq
-  repository: oci://ghcr.io/georchestra/bitnami-helm-charts
-  version: 14.4.0
-digest: sha256:ccc78c2bf311b8d0fa8045bc0554e01ffaf52bd4bb9aaf7fefada5543055d464
-generated: "2025-09-01T11:05:34.650331473+02:00"
+digest: sha256:c1c8676aa13bdf112ecfd270e88aba5d80a8c034060ef7b0615d395bc56fe715
+generated: "2025-10-09T11:44:00.438950227+02:00"

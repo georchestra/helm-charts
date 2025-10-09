@@ -1,0 +1,28 @@
+{{- $rabbitmq := .Values.rabbitmq -}}
+{{- if and $rabbitmq.enabled (not $rabbitmq.auth.host) -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "georchestra.fullname" . }}-rabbitmq
+  labels:
+    {{- include "georchestra.labels" . | nindent 4 }}
+    app.kubernetes.io/component: {{ include "georchestra.fullname" . }}-rabbitmq
+spec:
+  type: ClusterIP
+  ports:
+  - name: amqp
+    port: 5672
+    targetPort: amqp
+    protocol: TCP
+  - name: management
+    port: 15672
+    targetPort: management
+    protocol: TCP
+  - name: epmd
+    port: 4369
+    targetPort: epmd
+    protocol: TCP
+  selector:
+    {{- include "georchestra.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: {{ include "georchestra.fullname" . }}-rabbitmq
+{{- end }}

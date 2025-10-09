@@ -505,20 +505,35 @@ database:
 
 rabbitmq:
   enabled: false
-  builtin: true
+  image:
+    repository: rabbitmq
+    tag: 3.13-alpine
+    pullPolicy: IfNotPresent
   auth:
     username: georchestra
     password: georchestra
-    erlangCookie: georchestra  # needed only for builtin rabbitmq
-#   host: rabbitmq
+    erlangCookie: georchestra
+#   host: rabbitmq  # for external rabbitmq - if set, builtin rabbitmq deployment is disabled
     port: "5672"
 #   existingSecret: mysecret
-  # if you want to attach any existing PV - don't use this parameter
-  # if you just automatically want storage, consult the bitnam helm chart doc
-#  storage:
-#    pv_name: rabbitmq-data
-#    storage_class_name: default
-#    size: 1Gi
+  extra_environment: []
+  tolerations: []
+  podAnnotations: {}
+  # registry_secret: default
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      memory: 256Mi
+  # Storage configuration - always creates a PVC
+  # Specify pv_name to bind to an existing PV, otherwise dynamically provisions
+  storage:
+    # pv_name: rabbitmq-data  # Optional: name of existing PV to bind to
+    # storage_class_name: default  # Optional: storage class name
+    accessModes:
+    - ReadWriteOnce
+    size: 1Gi
 
 # Allow to override /etc/hosts for ALL apps
 # https://kubernetes.io/docs/tasks/network/customize-hosts-file-for-pods/

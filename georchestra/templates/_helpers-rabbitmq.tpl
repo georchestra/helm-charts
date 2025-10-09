@@ -4,12 +4,15 @@ Insert rabbitmq georchestra environment variables
 {{- define "georchestra.rabbitmq-georchestra-envs" -}}
 {{- $rabbitmq := .Values.rabbitmq -}}
 {{- $rabbitmq_secret_georchestra_name := "" -}}
-{{- if $rabbitmq.builtin }}
-{{- $rabbitmq_secret_georchestra_name = printf "%s-rabbitmq-georchestra-secret" (include "georchestra.fullname" .) -}}
-- name: RABBITMQ_HOST
-  value: "{{ .Release.Name }}-rabbitmq"
+{{- if $rabbitmq.auth.existingSecret }}
+{{- $rabbitmq_secret_georchestra_name = $rabbitmq.auth.existingSecret -}}
 {{- else }}
-{{- $rabbitmq_secret_georchestra_name = .Values.rabbitmq.auth.existingSecret -}}
+{{- $rabbitmq_secret_georchestra_name = printf "%s-rabbitmq-georchestra-secret" (include "georchestra.fullname" .) -}}
+{{- end }}
+{{- if not $rabbitmq.auth.host }}
+- name: RABBITMQ_HOST
+  value: "{{ include "georchestra.fullname" . }}-rabbitmq"
+{{- else }}
 - name: RABBITMQ_HOST
   valueFrom:
     secretKeyRef:

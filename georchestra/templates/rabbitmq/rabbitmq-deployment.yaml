@@ -1,0 +1,95 @@
+{{- $rabbitmq := .Values.rabbitmq -}}
+{{- if and $rabbitmq.enabled (not $rabbitmq.auth.host) -}}
+{{- $podAnnotations := mergeOverwrite .Values.podAnnotations (default dict $rabbitmq.podAnnotations) }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "georchestra.fullname" . }}-rabbitmq
+  labels:
+    {{- include "georchestra.labels" . | nindent 4 }}
+    app.kubernetes.io/component: {{ include "georchestra.fullname" . }}-rabbitmq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "georchestra.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: {{ include "georchestra.fullname" . }}-rabbitmq
+  template:
+    metadata:
+      labels:
+        {{- include "georchestra.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: {{ include "georchestra.fullname" . }}-rabbitmq
+      annotations:
+        {{- toYaml $podAnnotations | nindent 8 }}
+    spec:
+      nodeSelector:
+        "kubernetes.io/os": linux
+        {{- with .Values.georchestra.nodeSelector }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      containers:
+      - name: rabbitmq
+        image: "{{ $rabbitmq.image.repository }}:{{ $rabbitmq.image.tag }}"
+        imagePullPolicy: {{ $rabbitmq.image.pullPolicy }}
+        env:
+        - name: RABBITMQ_DEFAULT_USER
+          value: {{ $rabbitmq.auth.username | quote }}
+        - name: RABBITMQ_DEFAULT_PASS
+          value: {{ $rabbitmq.auth.password | quote }}
+        - name: RABBITMQ_ERLANG_COOKIE
+          value: {{ $rabbitmq.auth.erlangCookie | quote }}
+        {{- if $rabbitmq.extra_environment }}
+        {{- $rabbitmq.extra_environment | toYaml | nindent 8 }}
+        {{- end }}
+        ports:
+        - name: amqp
+          containerPort: 5672
+          protocol: TCP
+        - name: management
+          containerPort: 15672
+          protocol: TCP
+        - name: epmd
+          containerPort: 4369
+          protocol: TCP
+        volumeMounts:
+        - name: rabbitmq-data
+          mountPath: /var/lib/rabbitmq
+        livenessProbe:
+          exec:
+            command:
+            - rabbitmq-diagnostics
+            - -q
+            - ping
+          initialDelaySeconds: 120
+          periodSeconds: 30
+          timeoutSeconds: 20
+          failureThreshold: 6
+        readinessProbe:
+          exec:
+            command:
+            - rabbitmq-diagnostics
+            - -q
+            - check_running
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          timeoutSeconds: 20
+          failureThreshold: 3
+        resources:
+          {{- toYaml $rabbitmq.resources | nindent 10 }}
+      volumes:
+      - name: rabbitmq-data
+        persistentVolumeClaim:
+          claimName: {{ include "georchestra.fullname" . }}-rabbitmq
+      {{- if $rabbitmq.registry_secret }}
+      imagePullSecrets:
+      - name: {{ $rabbitmq.registry_secret }}
+      {{- end }}
+      {{- if $rabbitmq.tolerations }}
+      tolerations:
+        {{- $rabbitmq.tolerations | toYaml | nindent 8 }}
+      {{- end }}
+      {{- if .Values.hostAliases }}
+      hostAliases:
+        {{- .Values.hostAliases | toYaml | nindent 8 }}
+      {{- end }}
+{{- end }}
