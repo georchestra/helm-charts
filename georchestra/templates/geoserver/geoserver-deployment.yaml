@@ -196,10 +196,12 @@ spec:
         startupProbe:
           httpGet:
             path: /geoserver/ows?SERVICE=WMS&REQUEST=DescribeLayer&LAYERS=geor:public_layer&VERSION=1.1.1
-            port: http
-            scheme: HTTP
-          failureThreshold: 60
-          periodSeconds: 5
+            port: 8080
+            httpHeaders:
+            - name: ctrl-flow-priority
+              value: "10"
+          periodSeconds: 10
+          timeoutSeconds: 5
         resources:
           {{- toYaml $webapp.resources | nindent 10 }}
       volumes:
