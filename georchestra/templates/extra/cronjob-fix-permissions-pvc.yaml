@@ -16,6 +16,11 @@ spec:
       ttlSecondsAfterFinished: 86400
       template:
         spec:
+          nodeSelector:
+            "kubernetes.io/os": linux
+            {{- with .Values.georchestra.nodeSelector }}
+            {{- toYaml . | nindent 8 }}
+            {{- end }}
           containers:
           - name: fix-permissions-pvc
             image: "{{ .Values.tooling.general.image.repository }}:{{ .Values.tooling.general.image.tag }}"
@@ -56,8 +61,8 @@ spec:
             persistentVolumeClaim:
               claimName: {{ include "georchestra.fullname" . }}-geoserver-datadir
           restartPolicy: OnFailure
-          {{- if .Values.tooling.fixPermissionsPvc.tolerations }}
+          {{- if .Values.georchestra.webapps.geoserver.tolerations }}
           tolerations:
-            {{- .Values.tooling.fixPermissionsPvc.tolerations | toYaml | nindent 12}}
+            {{- .Values.georchestra.webapps.geoserver.tolerations | toYaml | nindent 12}}
           {{- end }}
 {{- end }}
