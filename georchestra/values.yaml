@@ -525,7 +525,7 @@ rabbitmq:
       cpu: 100m
       memory: 256Mi
     limits:
-      memory: 256Mi
+      memory: 1Gi
   # Storage configuration - always creates a PVC
   # Specify pv_name to bind to an existing PV, otherwise dynamically provisions
   storage:
