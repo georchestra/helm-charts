@@ -507,7 +507,7 @@ rabbitmq:
   enabled: false
   image:
     repository: rabbitmq
-    tag: 3.13-alpine
+    tag: 4.1
     pullPolicy: IfNotPresent
   auth:
     username: georchestra
