@@ -67,7 +67,7 @@ redis:
   #   initialDelaySeconds: 60
   #   [...]
   image:
-    repository: redis:alpine
+    repository: redis:8.2.2-alpine
     imagePullSecrets: []
     pullPolicy: IfNotPresent
   tolerations: []
