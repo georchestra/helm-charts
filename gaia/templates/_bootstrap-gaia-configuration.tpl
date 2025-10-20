@@ -113,4 +113,6 @@ Insert service host environment variables
   value: "{{ .Values.georchestra.releaseName }}-gn4-kibana-svc"
 - name: KB_PORT
   value: "5601"
+- name: GEOSERVER_DATA_DIR
+  value: /mnt/geoserver_datadir
 {{- end }}
