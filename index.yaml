@@ -23,6 +23,16 @@ entries:
     version: 1.0.0
   gaia:
   - apiVersion: v2
+    appVersion: 0.3.4
+    created: "2025-10-20T15:40:34.836469097Z"
+    description: A Helm chart for deploying redis, gaia-back and gaia-celery
+    digest: 434057f58b0f0c6d00a7af7aee591ffb97a932d87b72d76d7a69d8e4e987afdb
+    name: gaia
+    type: application
+    urls:
+    - https://github.com/georchestra/helm-charts/releases/download/gaia-0.2.1/gaia-0.2.1.tgz
+    version: 0.2.1
+  - apiVersion: v2
     appVersion: 0.3.2
     created: "2025-10-20T10:22:32.236613915Z"
     description: A Helm chart for deploying redis, gaia-back and gaia-celery
@@ -4344,4 +4354,4 @@ entries:
     urls:
     - https://github.com/georchestra/helm-charts/releases/download/maelstro-0.2.0/maelstro-0.2.0.tgz
     version: 0.2.0
-generated: "2025-10-20T10:22:32.237315917Z"
+generated: "2025-10-20T15:40:34.83736915Z"
