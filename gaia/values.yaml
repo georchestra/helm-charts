@@ -15,11 +15,11 @@ gaia_celery:
     annotations: {}
   resources:
     limits:
-      cpu: 500m
+      cpu: 2000m
       memory: 1024Mi
     requests:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 500m
+      memory: 256Mi
 gaia:
   enabled: true
   replicaCount: 1
@@ -51,11 +51,11 @@ gaia:
     annotations: {}
   resources:
     limits:
-      cpu: 500m
+      cpu: 2000m
       memory: 1024Mi
     requests:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 500m
+      memory: 256Mi
 redis:
   enabled: true
   replicaCount: 1
