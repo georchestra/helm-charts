@@ -368,7 +368,7 @@ georchestra:
     # relay_password:  aaaa
     image:
       repository: georchestra/exim
-      tag: "20250919"
+      tag: "20251101"
     extra_environment: []
     resources:
       requests:
