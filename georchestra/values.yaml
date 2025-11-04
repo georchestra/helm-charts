@@ -182,6 +182,10 @@ georchestra:
       enabled: true
       replicaCount: "1"
       docker_image: georchestra/geoserver:latest
+      environment:
+        # Filesystem sandbox restricts access to one particular directory
+        # See: https://docs.geoserver.org/main/en/user/security/sandbox.html
+        GEOSERVER_FILESYSTEM_SANDBOX: "/mnt/geoserver_geodata"
       extra_environment: []
       # volumes is the deployment-compliant specification of the pod's extra volume
       # It should match with an item from the extra_volumeName.name variable below.

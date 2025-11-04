@@ -162,6 +162,10 @@ spec:
           - name: GEOSERVER_CSRF_WHITELIST
             value: {{ .Values.fqdn }}
           {{- include "georchestra.database-georchestra-envs" . | nindent 10 }}
+          {{- range $key, $value := $webapp.environment }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+          {{- end }}
           {{- if $webapp.extra_environment }}
           {{- $webapp.extra_environment | toYaml | nindent 10 }}
           {{- end }}
