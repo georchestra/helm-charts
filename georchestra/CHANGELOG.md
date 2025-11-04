@@ -1,3 +1,8 @@
+# 1.14.0
+
+- Add support for env GEOSERVER_FILESYSTEM_SANDBOX (#198)
+- Put elasticsearch password in a dedicated k8s secret (#199)
+
 # 1.13.0
 
 - Complete removal of Bitnami rabbitmq (#188):  
