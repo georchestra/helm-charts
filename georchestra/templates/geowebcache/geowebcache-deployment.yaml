@@ -79,6 +79,8 @@ spec:
           httpGet:
             path: /geowebcache/
             port: http
+          periodSeconds: 10
+          timeoutSeconds: 5
         {{- end }}
         startupProbe:
           failureThreshold: 5
