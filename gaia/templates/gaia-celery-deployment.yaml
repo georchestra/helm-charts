@@ -19,10 +19,19 @@ spec:
       labels:
         {{- include "helm-gaia.selectorLabelsCelery" . | nindent 8 }}
     spec:
-      {{- if .Values.datadir.git.url }}
       initContainers:
+      {{- if .Values.datadir.git.url }}
       {{- include "gaia.bootstrap_gaia_configuration" $ | nindent 6 }}
       {{- end }}
+      - name: bootstrap-gaia-celery-scheduler
+        image: "{{ .Values.datadir.image.repository }}:{{ .Values.datadir.image.tag }}"
+        command:
+          - /bin/sh
+          - -c
+          - chown 10000:10001 /geordash/workdir/ ;
+        volumeMounts:
+          - mountPath: /geordash/workdir/
+            name: gaia-celery-scheduler
       {{- with .Values.gaia_celery.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -71,8 +80,12 @@ spec:
               name: geoserver-datadir
             - mountPath: /mnt/mapstore_datadir
               name: mapstore-datadir
+            - mountPath: /geordash/workdir/
+              name: gaia-celery-scheduler
       volumes:
         - name: georchestra-datadir
+          emptyDir: {}
+        - name: gaia-celery-scheduler
           emptyDir: {}
         - name: geonetwork-datadir
           persistentVolumeClaim:
