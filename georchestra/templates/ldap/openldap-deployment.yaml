@@ -80,10 +80,10 @@ spec:
       volumes:
       - name: openldap-data
         persistentVolumeClaim:
-          claimName: {{ include "georchestra.fullname" . }}-openldap-data
+          claimName: {{ include "georchestra.storage.claimName" (list . "openldap_data") }}
       - name: openldap-config
         persistentVolumeClaim:
-          claimName: {{ include "georchestra.fullname" . }}-openldap-config
+          claimName: {{ include "georchestra.storage.claimName" (list . "openldap_config") }}
       {{- if $webapp.extraVolumes }}
           {{- toYaml $webapp.extraVolumes | nindent 6 }}
       {{- end }}

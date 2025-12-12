@@ -324,40 +324,35 @@ georchestra:
       # ssh_secret: my-private-ssh-key
   # Some cloud providers automatically create & assign PVs to PVCs
   # some other need to create a PV first ; if so, then you can
-  # uncomment the `pv_name` entries below.
+  # use the `pv_name` entries below.
   storage:
+    # Example storage block :
+    # <reference>:
+    #   pv_name: Optional - If set will use this existing PV to generate PVC
+    #   existingClaim: Optional - If set, the chart will not create the PVC and will reference this existing one (override pv_name)
+    #   size: Required - Size of the storage (in Gi, Mi)
+    #   storage_class_name: default or "-" for empty storageClassName
+    #   accessModes: Optional - If set will override the general value for this storage
+    #   - ReadWriteOnce|ReadOnlyMany|ReadWriteMany
     gn4_es:
-      # pv_name: gn4_es_data
       size: 2Gi
     geonetwork_datadir:
-      # pv_name: geonetwork_datadir
       size: 2Gi
     geoserver_datadir:
-      # pv_name: geoserver_datadir
       size: 256Mi
     geoserver_geodata:
-      # pv_name: geoserver_geodata
-      # works for other storage items
-      # storage_class_name: default or "-" for empty storageClassName
-      # accessModes:
-      # - ReadWriteOnce
       size: 2Gi
     mapstore_datadir:
-      # pv_name: mapstore_datadir
       size: 256Mi
     openldap_data:
-      # pv_name: openldap_data
       size: 256Mi
     openldap_config:
-      # pv_name: openldap_config
       size: 1Mi
     geoserver_tiles:
-      # pv_name: geoserver_tiles
       size: 2Gi
     geowebcache_tiles:
-      # pv_name: geowebcache_tiles
       size: 5Gi
-    # We also might need to specify a custom storageClass
+    # We also might need to specify a default custom storageClass
     # Leave it commented if not needed
     # storage_class_name: default or "-" for empty storageClassName
     accessModes:

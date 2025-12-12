@@ -219,13 +219,13 @@ spec:
         emptyDir: {}
       - name: geoserver-tiles
         persistentVolumeClaim:
-          claimName: {{ include "georchestra.fullname" . }}-geoserver-tiles
+          claimName: {{ include "georchestra.storage.claimName" (list . "geoserver_tiles") }}
       - name: geoserver-geodata
         persistentVolumeClaim:
-          claimName: {{ include "georchestra.fullname" . }}-geoserver-geodata
+          claimName: {{ include "georchestra.storage.claimName" (list . "geoserver_geodata") }}
       - name: geoserver-datadir
         persistentVolumeClaim:
-          claimName: {{ include "georchestra.fullname" . }}-geoserver-datadir
+          claimName: {{ include "georchestra.storage.claimName" (list . "geoserver_datadir") }}
       {{- if .Values.georchestra.datadir.git.ssh_secret }}
       - name: ssh-secret
         secret:
