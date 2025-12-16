@@ -4,7 +4,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "georchestra.fullname" . }}-openldap-data
+  name: {{ include "georchestra.storage.claimName" (list . "openldap_data") }}
   labels:
     {{- include "georchestra.labels" . | nindent 4 }}
     app.kubernetes.io/component: {{ include "georchestra.fullname" . }}-ldap
