@@ -72,7 +72,7 @@ datadir:
     emptyDir: {}
   image:
     repository: alpine/git
-    tag: 2.49.1
+    tag: 2.52.0
 
   git:
     url: https://github.com/georchestra/datadir.git
