@@ -47,7 +47,7 @@ jobs:
         run: |
           # sometimes it fail to download the binary
           for i in {1..5}; do
-            helm plugin install --verify=false https://github.com/jtyr/kubeconform-helm && break
+            helm plugin install --verify=false --version feat/binloader/pass-github-token https://github.com/hileef/kubeconform-helm && break
             echo "Retry $i failed... trying again in 5 seconds"
             sleep 5
           done
