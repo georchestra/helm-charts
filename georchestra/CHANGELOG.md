@@ -1,3 +1,9 @@
+# 1.15.0
+- Add support for existing PVCs via existingClaim (#204)
+- Fix issue with podAnnotations (#208)
+- Switch image parameter to dedicated section (#134)
+  SEMI-BREAKING: You are advised to switch to the new format. The old format will be at one point.
+
 # 1.14.0
 
 - Add support for env GEOSERVER_FILESYSTEM_SANDBOX (#198)
