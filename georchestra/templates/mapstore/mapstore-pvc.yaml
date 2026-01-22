@@ -1,10 +1,10 @@
 {{- $webapp := .Values.georchestra.webapps.mapstore -}}
 {{- $webapp_storage := .Values.georchestra.storage.mapstore_datadir -}}
-{{- if $webapp.enabled -}}
+{{- if and $webapp.enabled (not $webapp_storage.existingClaim) -}}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "georchestra.fullname" . }}-mapstore-datadir
+  name: {{ include "georchestra.storage.claimName" (list . "mapstore_datadir") }}
   labels:
     {{- include "georchestra.labels" . | nindent 4 }}
     app.kubernetes.io/component: {{ include "georchestra.fullname" . }}-mapstore

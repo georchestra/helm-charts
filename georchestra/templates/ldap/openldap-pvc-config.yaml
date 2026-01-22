@@ -1,10 +1,10 @@
 {{- $webapp := .Values.georchestra.webapps.openldap -}}
 {{- $webapp_storage := .Values.georchestra.storage.openldap_config -}}
-{{- if $webapp.enabled -}}
+{{- if and $webapp.enabled (not $webapp_storage.existingClaim) -}}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "georchestra.fullname" . }}-openldap-config
+  name: {{ include "georchestra.storage.claimName" (list . "openldap_config") }}
   labels:
     {{- include "georchestra.labels" . | nindent 4 }}
     app.kubernetes.io/component: {{ include "georchestra.fullname" . }}-ldap

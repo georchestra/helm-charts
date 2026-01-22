@@ -86,7 +86,7 @@ spec:
         emptyDir: {}
       - name: geonetwork-datadir
         persistentVolumeClaim:
-          claimName: {{ include "georchestra.fullname" . }}-geonetwork-datadir
+          claimName: {{ include "georchestra.storage.claimName" (list . "geonetwork_datadir") }}
       {{- if .Values.georchestra.datadir.git.ssh_secret }}
       - name: ssh-secret
         secret:

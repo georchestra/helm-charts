@@ -1,10 +1,11 @@
-{{- $webapp := .Values.georchestra.webapps.geonetwork.elasticsearch -}}
+{{- $gn := .Values.georchestra.webapps.geonetwork -}}
+{{- $webapp := $gn.elasticsearch -}}
 {{- $webapp_storage := .Values.georchestra.storage.gn4_es -}}
-{{- if .Values.georchestra.webapps.geonetwork.enabled -}}
+{{- if and $gn.enabled $webapp.enabled (not $webapp_storage.existingClaim) -}}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "georchestra.fullname" . }}-gn4-es-data
+  name: {{ include "georchestra.storage.claimName" (list . "gn4_es") }}-data
   labels:
     {{- include "georchestra.labels" . | nindent 4 }}
     app.kubernetes.io/component: {{ include "georchestra.fullname" . }}-gn4-elasticsearch

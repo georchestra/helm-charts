@@ -103,7 +103,7 @@ spec:
         emptyDir: {}
       - name: geowebcache-tiles
         persistentVolumeClaim:
-          claimName: {{ include "georchestra.fullname" . }}-geowebcache-tiles
+          claimName: {{ include "georchestra.storage.claimName" (list . "geowebcache_tiles") }}
       {{- if .Values.georchestra.datadir.git.ssh_secret }}
       - name: ssh-secret
         secret:

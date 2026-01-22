@@ -1,10 +1,10 @@
 {{- $webapp := .Values.georchestra.webapps.geoserver -}}
 {{- $webapp_storage := .Values.georchestra.storage.geoserver_tiles -}}
-{{- if and $webapp.enabled .Values.georchestra.storage.geoserver_tiles -}}
+{{- if and $webapp.enabled .Values.georchestra.storage.geoserver_tiles (not $webapp_storage.existingClaim) -}}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "georchestra.fullname" . }}-geoserver-tiles
+  name: {{ include "georchestra.storage.claimName" (list . "geoserver_tiles") }}
   labels:
     {{- include "georchestra.labels" . | nindent 4 }}
     app.kubernetes.io/component: {{ include "georchestra.fullname" . }}-geoserver
