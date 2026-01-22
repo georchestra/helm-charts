@@ -89,7 +89,7 @@ spec:
       volumes:
       - name: gn4-es-data
         persistentVolumeClaim:
-          claimName: {{ include "georchestra.storage.claimName" (list . "gn4_es") }}
+          claimName: {{ include "georchestra.storage.claimName" (list . "gn4_es") }}-data
       {{- if $webapp.tolerations }}
       tolerations:
         {{- $webapp.tolerations | toYaml | nindent 8 }}

@@ -5,7 +5,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "georchestra.storage.claimName" (list . "gn4_es") }}
+  name: {{ include "georchestra.storage.claimName" (list . "gn4_es") }}-data
   labels:
     {{- include "georchestra.labels" . | nindent 4 }}
     app.kubernetes.io/component: {{ include "georchestra.fullname" . }}-gn4-elasticsearch
