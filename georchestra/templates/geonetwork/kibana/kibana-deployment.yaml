@@ -32,7 +32,8 @@ spec:
         {{- end }}
       containers:
       - name: kibana
-        image: {{ $webapp.image }}
+        image: {{ include "georchestra.webappImage" $webapp }}
+        imagePullPolicy: {{ include "georchestra.webappImagePullPolicy" $webapp }}
         env:
           - name: ELASTICSEARCH_HOSTS
             value: http://{{ include "georchestra.fullname" . }}-gn4-elasticsearch-svc:9200

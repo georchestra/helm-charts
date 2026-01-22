@@ -34,8 +34,8 @@ spec:
       {{- include "georchestra.bootstrap_georchestra_datadir" . | nindent 6 }}
       containers:
       - name: georchestra-cas
-        image: {{ $webapp.docker_image }}
-        imagePullPolicy: Always
+        image: {{ include "georchestra.webappImage" $webapp }}
+        imagePullPolicy: {{ include "georchestra.webappImagePullPolicy" $webapp }}
         env:
           {{- include "georchestra.common-envs" . | nindent 10 }}
           {{- include "georchestra.ldap-envs" . | nindent 10 }}

@@ -51,8 +51,8 @@ spec:
 
       containers:
       - name: georchestra-sp
-        image: {{ $webapp.docker_image }}
-        imagePullPolicy: Always
+        image: {{ include "georchestra.webappImage" $webapp }}
+        imagePullPolicy: {{ include "georchestra.webappImagePullPolicy" $webapp }}
         env:
           {{- include "georchestra.service-envs" . | nindent 10 }}
           {{- include "georchestra.common-envs" . | nindent 10 }}

@@ -53,8 +53,8 @@ spec:
 
       containers:
       - name: georchestra-datafeeder
-        image: {{ $webapp.docker_image }}
-        imagePullPolicy: Always
+        image: {{ include "georchestra.webappImage" $webapp }}
+        imagePullPolicy: {{ include "georchestra.webappImagePullPolicy" $webapp }}
         env:
           - name: GEONETWORK_HOST
             value: "{{ include "georchestra.fullname" . }}-geonetwork-svc"
