@@ -60,3 +60,28 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Get the image for a webapp with backward compatibility for docker_image
+Usage: {{ include "georchestra.webappImage" $webapp }}
+Returns the full image string (repository:tag)
+*/}}
+{{- define "georchestra.webappImage" -}}
+{{- if .docker_image -}}
+{{- .docker_image -}}
+{{- else -}}
+{{- printf "%s:%s" .image.repository .image.tag -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Get the image pull policy for a webapp with backward compatibility
+Usage: {{ include "georchestra.webappImagePullPolicy" $webapp }}
+*/}}
+{{- define "georchestra.webappImagePullPolicy" -}}
+{{- if .docker_image -}}
+IfNotPresent
+{{- else -}}
+{{- .image.pullPolicy | default "IfNotPresent" -}}
+{{- end -}}
+{{- end -}}

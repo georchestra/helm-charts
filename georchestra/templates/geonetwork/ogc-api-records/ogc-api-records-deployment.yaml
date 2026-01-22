@@ -56,8 +56,8 @@ spec:
 
       containers:
       - name: ogc-api-records
-        image: "{{ $webapp.image.repository }}:{{ $webapp.image.tag }}"
-        imagePullPolicy: {{ $webapp.image.pullPolicy | default "IfNotPresent" }}
+        image: {{ include "georchestra.webappImage" $webapp }}
+        imagePullPolicy: {{ include "georchestra.webappImagePullPolicy" $webapp }}
         env:
           - name: LANG
             value: en_US.UTF-8

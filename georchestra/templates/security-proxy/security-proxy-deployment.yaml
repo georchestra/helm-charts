@@ -51,8 +51,8 @@ spec:
 
       containers:
       - name: georchestra-sp
-        image: "{{ $webapp.image.repository }}:{{ $webapp.image.tag }}"
-        imagePullPolicy: {{ $webapp.image.pullPolicy | default "IfNotPresent" }}
+        image: {{ include "georchestra.webappImage" $webapp }}
+        imagePullPolicy: {{ include "georchestra.webappImagePullPolicy" $webapp }}
         env:
           {{- include "georchestra.service-envs" . | nindent 10 }}
           {{- include "georchestra.common-envs" . | nindent 10 }}

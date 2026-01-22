@@ -32,8 +32,8 @@ spec:
         {{- end }}
       containers:
       - name: georchestra-smtp
-        image: "{{ $webapp.image.repository }}:{{ $webapp.image.tag }}"
-        imagePullPolicy: {{ $webapp.image.pullPolicy | default "IfNotPresent" }}
+        image: {{ include "georchestra.webappImage" $webapp }}
+        imagePullPolicy: {{ include "georchestra.webappImagePullPolicy" $webapp }}
         env:
           {{- if $webapp.relay_host }}
           - name: RELAY_HOST

@@ -40,8 +40,8 @@ spec:
       {{ include "georchestra.bootstrap_georchestra_datadir" . | nindent 6 }}
       containers:
       - name: georchestra-geoserver
-        image: "{{ $webapp.image.repository }}:{{ $webapp.image.tag }}"
-        imagePullPolicy: {{ $webapp.image.pullPolicy | default "IfNotPresent" }}
+        image: {{ include "georchestra.webappImage" $webapp }}
+        imagePullPolicy: {{ include "georchestra.webappImagePullPolicy" $webapp }}
         env:
           {{ if $database.builtin }}
           - name: GEODATA_PGHOST
