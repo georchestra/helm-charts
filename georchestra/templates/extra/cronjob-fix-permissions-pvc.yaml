@@ -1,5 +1,5 @@
 {{- if and .Values.georchestra.webapps.geonetwork.enabled .Values.georchestra.webapps.geoserver.enabled -}}
-{{- $podAnnotations := mergeOverwrite .Values.podAnnotations (default dict .Values.tooling.fixPermissionsPvc.podAnnotations ) }}
+{{- $podAnnotations := merge (dict) .Values.podAnnotations (default dict .Values.tooling.fixPermissionsPvc.podAnnotations) }}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -7,8 +7,10 @@ metadata:
   labels:
     {{- include "georchestra.labels" . | nindent 4 }}
     app.kubernetes.io/component: {{ include "georchestra.fullname" . }}-fix-permissions-pvc
+  {{- with $podAnnotations }}
   annotations:
-    {{- toYaml $podAnnotations | nindent 4 }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   schedule: "{{ .Values.tooling.fixPermissionsPvc.schedule }}"
   jobTemplate:

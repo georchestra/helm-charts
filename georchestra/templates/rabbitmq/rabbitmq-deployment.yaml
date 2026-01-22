@@ -1,6 +1,6 @@
 {{- $rabbitmq := .Values.rabbitmq -}}
 {{- if and $rabbitmq.enabled (not $rabbitmq.auth.host) -}}
-{{- $podAnnotations := mergeOverwrite .Values.podAnnotations (default dict $rabbitmq.podAnnotations) }}
+{{- $podAnnotations := merge (dict) .Values.podAnnotations (default dict $rabbitmq.podAnnotations) }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -19,8 +19,10 @@ spec:
       labels:
         {{- include "georchestra.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: {{ include "georchestra.fullname" . }}-rabbitmq
+      {{- with $podAnnotations }}
       annotations:
-        {{- toYaml $podAnnotations | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
     spec:
       nodeSelector:
         "kubernetes.io/os": linux

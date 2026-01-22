@@ -1,7 +1,7 @@
 {{- $webapp := .Values.georchestra.webapps.geonetwork.ogc_api_records -}}
 {{- if and .Values.georchestra.webapps.geonetwork.enabled $webapp.enabled -}}
 {{- $database := .Values.database -}}
-{{- $podAnnotations := mergeOverwrite .Values.podAnnotations (default dict $webapp.podAnnotations) }}
+{{- $podAnnotations := merge (dict) .Values.podAnnotations (default dict $webapp.podAnnotations) }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -21,8 +21,10 @@ spec:
         {{- include "georchestra.selectorLabels" . | nindent 8 }}
         org.georchestra.service/name: {{ include "georchestra.fullname" . }}-gn4-ogc-api-records
         app.kubernetes.io/component: {{ include "georchestra.fullname" . }}-gn4-ogc-api-records
+      {{- with $podAnnotations }}
       annotations:
-        {{- toYaml $podAnnotations | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
     spec:
       nodeSelector:
         "kubernetes.io/os": linux
