@@ -1,212 +1,274 @@
-# About
+# geOrchestra Helm Chart
 
-This folder holds the helm chart for geOrchestra. This README file aims to present
-some of the features and/or implementation choices.
+This is the official Helm chart for deploying geOrchestra on Kubernetes clusters.
 
-# Maintainers
+## Maintainers
 
-## How to create a new chart release
-**IMPORTANT**: Don't create too many versions, test your changes using git submodules for example. Create new versions with a batch of features if possible.
+### Creating a New Chart Release
 
-1. Change the version in the Chart.yaml.  
-   Please follow https://semver.org, if you are adding a new feature bump the MINOR version, otherwise if it's a bugfix bump the PATCH version.
-2. Write a changelog in the CHANGELOG.md
-3. Push your changes.
+**IMPORTANT**: Avoid creating too many versions. Test changes using git submodules or other methods. Release versions in batches when possible.
 
-# Usage
+1. Update the version in `Chart.yaml` following [Semantic Versioning](https://semver.org):
+   - **MINOR** version: New features
+   - **PATCH** version: Bug fixes
+2. Document changes in `CHANGELOG.md`
+3. Push your changes
 
-## Install
+## Quick Start
 
-WARNING: Change `X.X.X` by the latest version of the helm chart found in https://github.com/georchestra/helm-charts/blob/main/Chart.yaml#L18
-
-### Quick start
-
-1. Install a Ingress Controller if you don't already have one.   
-   NGINX Ingress controller is a good example:
-   ````
+1. Install an Ingress Controller if you don't already have one:
+   ```bash
    helm upgrade --install ingress-nginx ingress-nginx \
       --repo https://kubernetes.github.io/ingress-nginx \
       --namespace ingress-nginx --create-namespace
-   ````
-3. Execute these commands for installing the georchestra chart:  
-   ```
-   helm install georchestra oci://ghcr.io/georchestra/helm-charts/georchestra --version X.X.X --set fqdn=YOURDOMAIN
-   ```
-   Note: For the domain you can use `georchestra-127-0-1-1.traefik.me`, just replace `127-0-1-1` with the IP address of your server.
-
-4. Go to [https://YOURDOMAIN](https://YOURDOMAIN)
-
-### Customized installation
-1. Create a new separate 'values' file (or edit the existing one, not recommended).  
-   Edit the parameters like `fqdn`, `database` or `ldap` if needed.
-2. Install a Ingress Controller if you don't already have one.   
-   NGINX Ingress controller is a good example:
-   ````
-   helm upgrade --install ingress-nginx ingress-nginx \
-      --repo https://kubernetes.github.io/ingress-nginx \
-      --namespace ingress-nginx --create-namespace
-   ````
-3. Execute these commands for installing the georchestra chart:  
-   ```
-   helm install -f your-values.yaml georchestra oci://ghcr.io/georchestra/helm-charts/georchestra --version X.X.X
    ```
 
-4. Go to [https://YOURDOMAIN](https://YOURDOMAIN)
+2. Install geOrchestra:
+   ```bash
+   helm install georchestra oci://ghcr.io/georchestra/helm-charts/georchestra \
+      --set fqdn=YOURDOMAIN
+   ```
+   
+   **Tip:** For testing, you can use a domain like `georchestra-127-0-1-1.nip.io` (replace with your server's IP).
 
-## Upgrade
+3. Access your geOrchestra instance at `https://YOURDOMAIN`
 
-Apply only for a customized installation.
+## Installation
 
-```
-helm upgrade -f your-values.yaml georchestra oci://ghcr.io/georchestra/helm-charts/georchestra --version X.X.X
-```
+### Customized Installation
 
-# geOrchestra Datadir bootstrap
+1. Create a custom values file:
+   ```bash
+   # Download the default values.yaml
+   helm show values oci://ghcr.io/georchestra/helm-charts/georchestra > my-values.yaml
+   ```
 
-The helm chart provides the possibility to clone the datadir from a remote repository using git. A
-secret SSH key can be provided to do so.
+2. Edit `my-values.yaml` to configure:
+   - `fqdn`: Your domain name
+   - `database`: Database configuration (builtin or external)
+   - `ldap`: LDAP/OpenLDAP settings
+   - Component-specific settings (enable/disable services, resources, etc.)
 
-# Mapstore2 / geOrchestra datadir
+3. Install with your custom values:
+   ```bash
+   helm install georchestra oci://ghcr.io/georchestra/helm-charts/georchestra \
+      -f my-values.yaml
+   ```
 
-On the mapstore2 webapp, we are using the following strategy:
+### Upgrade
 
-* the `georchestra_datadir` is bootstrapped from a git repository the same way as the other geOrchestra components
-* we mount the mapstore dynamic datadir onto `/mnt/mapstore2`
-
-# CAS 6 theme customizations
-
-An initContainer will take care of overriding the `themes` and `templates` subdirectory from the webapp classpath, if
-such ones exist into the georchestra data directory.
-
-As a result, it is possible to override the default georchestra theme by creating a `cas/themes` and a `cas/templates` subdirectory
-into the georchestra datadir.
-
-
-# About livenessProbes
-
-The healthchecks for the different webapps have been implemented using `livenessProbe`s and `startupProbe`s.
-Checking in the logs how long the webapps needed to bootstrap themselves, then multiplying the needed time per 3,
-to keep a safety margin.
-
-Here is an example with the `analytics` webapp:
-
-
-```
-2022-02-21 20:53:49.500:INFO:oejs.AbstractConnector:main: Started ServerConnector@587d1d39{HTTP/1.1, (http/1.1)}{0.0.0.0:8080}
-2022-02-21 20:53:49.500:INFO:oejs.Server:main: Started @2865ms
+```bash
+helm upgrade georchestra oci://ghcr.io/georchestra/helm-charts/georchestra \
+   -f my-values.yaml
 ```
 
-If we round the `2865ms` to 3 seconds, then multiplying per 3 gives us 9 seconds. Let's round it to 10 seconds.
+## Architecture
 
-It gives the following yaml specification:
+<details>
+<summary>Click to expand architecture details</summary>
 
+### Core Components (Enabled by Default)
+
+- **Gateway** - Modern Spring Cloud Gateway-based security gateway
+- **Console** - User and organization management interface
+- **GeoServer** - OGC-compliant map and feature server
+- **GeoNetwork** - Metadata catalog
+- **Elasticsearch** - Search engine for GeoNetwork
+- **MapStore** - Web mapping application
+- **OpenLDAP** - User directory
+- **Datafeeder** - Data upload and publishing tool
+- **PostgreSQL** - Database (builtin or external)
+- **SMTP** - Email service
+
+### Optional Components (Disabled by Default)
+
+- **Analytics** - Usage analytics (deprecated)
+- **CAS** - Legacy authentication server
+- **Header** - Legacy header component  
+- **Security Proxy** - Legacy security proxy (replaced by Gateway)
+- **GeoWebCache** - Standalone tile caching service
+- **OGC API Records** - OGC API Records service for GeoNetwork
+- **Kibana** - Elasticsearch visualization
+- **RabbitMQ** - Message broker
+
+### Infrastructure Components
+
+- **Ingress** - HTTP/HTTPS routing to services
+- **Persistent Volumes** - Storage for data directories and databases
+
+</details>
+
+## Configuration
+
+### Data Directory (Datadir)
+
+The chart supports bootstrapping the geOrchestra datadir from a Git repository:
+
+```yaml
+georchestra:
+  datadir:
+    git:
+      url: https://github.com/georchestra/datadir.git
+      ref: docker-master
+      # ssh_secret: my-private-ssh-key  # Optional: for private repos
 ```
-livenessProbe:
-  httpGet:
-    path: /analytics/
-    port: 8080
-  periodSeconds: 10
-startupProbe:
-  tcpSocket:
-    port: 8080
-  failureThreshold: 5
-  periodSeconds: 10
+
+The datadir contains configuration files for all geOrchestra components. An initContainer clones the repository before starting services.
+
+### Storage
+
+Persistent volumes are used for:
+- **geonetwork_datadir** - GeoNetwork data (default: 2Gi)
+- **gn4_es** - Elasticsearch data (default: 2Gi)
+- **geoserver_datadir** - GeoServer configuration (default: 256Mi)
+- **geoserver_geodata** - GeoServer data files (default: 2Gi)
+- **geoserver_tiles** - GeoServer tile cache (default: 2Gi)
+- **mapstore_datadir** - MapStore data (default: 256Mi)
+- **openldap_data** - LDAP data (default: 256Mi)
+- **openldap_config** - LDAP configuration (default: 1Mi)
+- **geowebcache_tiles** - GeoWebCache tile cache (default: 5Gi, if enabled)
+
+Configure storage in your values file:
+
+```yaml
+georchestra:
+  storage:
+    geoserver_datadir:
+      size: 1Gi
+      # storage_class_name: my-storage-class
+      # pv_name: my-existing-pv
+      # existingClaim: my-existing-pvc
 ```
 
-Actually, the container will benefit from 5 trials of 10 seconds before failing to start. Afterwards, the containers
-will be tested every 10 seconds onto its `/analytics/` endpoint during its lifetime, to check if it still alive.
-If not, after 2 other trials (`failurethreshold` being set to 3), the container will be considered as failing and be restarted.
+### Database
 
-CAS takes 26 seconds to boot. Multiplying per 3 might be a bit overkill, considering 60 seconds instead. The threshold will allow 5 60-second trials anyway.
+The chart includes a PostgreSQL database by default, or you can use an external database:
 
-GeoNetwork is particular, as the `httpGet` request can take longer than expected depending on the wro4j cache. A custom `timeoutSeconds` has been set to 5 seconds.
-
-About the `livenessProbe`s, we kept the default `failureThreshold` to 3, meaning that 3 successive failing attempts will need to be performed before the container is considered as failing.
-
-The `mapstore` docker image is making use of Tomcat instead of Jetty, so we will use a `startupProbe` based on `httpGet`,
-similar to the one used for `livenessProbe`, instead of a tcpSocket one which is used on the other Jetty-based containers.
-
-The `ldap` deployment object has been configured with only a `livenessProbe`, as we cannot tell if the ldap database has
-already been initialized or not. Doing some tries with a single pod, it has been estimated that 30 seconds should be
-sufficient to populate the database initially.
-
-The `datafeeder` (backend) requires now a valid account passed as a base64-encoded HTTP header (the `sec-user` header, maybe some others). As a result, testing via a HTTP request for liveness is not easy. We still can pass some headers to the request, but if it requires a valid account,
-then maybe we shall stick to a simpler `tcpSocket` one.
-
-# Update strategy
-
-The default update strategy in kubernetes being RollingUpdate, we can fall into a situation where new containers are created but never started because waiting for the volumes to be released from the former pods.
-
-As a result, several containers run with a `.strategy.type` set to `recreate` instead of `RollingUpdate`. This is basically the case for
-every deployments which are making use of Persistent volumes:
-
-* elasticsearch (used by GeoNetwork4)
-* geonetwork
-* geoserver
-* mapstore
-* openldap
-
-# Resources allocations and limits
-
-The requested and limits to allocated CPU and RAM is configurable in the `values.yaml` file for each component.
-
-You can configure it with the availables `resources` parameter : 
-
+```yaml
+database:
+  builtin: true  # Set to false for external database
+  auth:
+    database: georchestra
+    username: georchestra
+    password: changeme
+    # existingSecret: my-db-secret  # Optional: use existing secret
 ```
+
+It is highly recommended to use an external database in production as the built-in database is only for dev.
+
+Three databases are created: `georchestra`, `geodata`, and `datafeeder`.
+
+### LDAP
+
+Configure LDAP settings:
+
+```yaml
+ldap:
+  adminPassword: "secret"
+  baseDn: "dc=georchestra,dc=org"
+  # host: "external-ldap"  # Optional: use external LDAP
+```
+
+### RabbitMQ
+
+RabbitMQ can be enabled for event-driven architectures related to Console and Gateway:
+
+```yaml
+rabbitmq:
+  enabled: true
+  auth:
+    username: georchestra
+    password: changeme
+  storage:
+    size: 1Gi
+```
+
+## Technical Implementation Details
+
+<details>
+<summary>Click to expand technical details</summary>
+
+### Health Checks
+
+The chart implements health checks using `livenessProbe` and `startupProbe`:
+
+- **startupProbe**: Allows containers sufficient time to start (typically 5 attempts × 10 seconds)
+- **livenessProbe**: Continuously monitors container health (every 10 seconds, 3 failure threshold)
+
+Most services use HTTP-based health checks, while some use TCP socket checks. GeoNetwork has a custom `timeoutSeconds` of 5 seconds due to wro4j cache considerations.
+
+### Update Strategy
+
+Services using persistent volumes use the `Recreate` update strategy instead of `RollingUpdate` to avoid volume mounting conflicts during updates. These services include:
+
+- Elasticsearch (used by GeoNetwork)
+- GeoNetwork
+- GeoWebCache
+- MapStore
+- OpenLDAP
+
+Other services (including GeoServer) use the default `RollingUpdate` strategy.
+
+### Resource Management
+
+All components support configurable resource requests and limits via `values.yaml`:
+
+```yaml
 resources:
-  limits:
-    cpu: 2000m
-    memory: 4Gi
   requests:
     cpu: 1000m
     memory: 2Gi
+  limits:
+    cpu: 2000m
+    memory: 4Gi
 ```
 
-This config will request 1 CPU and 2Gi RAM to launch and limits consumption to 2 CPU and 4Gi RAM.
+</details>
 
-Bellow are default configs, they were determined for a test environment (request + limits) :
+## Recommended Resource Allocations
 
-|                     | CPU - Requests | CPU - Limits | RAM - Requests | RAM - Limits |
-|---------------------|----------------|--------------|----------------|--------------|
-| console             | 100m           | unset        | 1024Mi         | 1024Mi       |
-| datafeeder          | 100m           | unset        | 512Mi          | 512Mi        |
-| datafeeder-frontend | 50m            | unset        | 128Mi          | 128Mi        |
-| geonetwork          | 200m           | 2000m        | 1512Mi         | 1512Mi       |
-| ogc-api-records     | 100m           | unset        | 1024Mi         | 1024Mi       |
-| elasticsearch       | 200            | 2000         | 1512Mi         | 1512Mi       |
-| kibana              | 100m           | unset        | 1024Mi         | 1024Mi       |
-| geoserver           | 100m           | 4000m        | 2048Mi         | 2048Mi       |
-| header              | 50Mi           | unset        | 512Mi          | 512Mi        |
-| mapstore            | 100m           | unset        | 1024Mi         | 1024Mi       |
-| openldap            | 100m           | unset        | 1024Mi         | 1024Mi       |
-| gateway             | 500m           | 4000m        | 1024Mi         | 1024Mi       |
-| database (PG)       | 200m           | unset        | 512Mi          | 512Mi        |
-| smtp                | 50Mi           | unset        | 64Mi           | 64Mi         |
+### Test/Development Environment
 
-In production you need to configure accordingly to your environment:
-- The CPU requests and limits needed for geonetwork, elasticsearch, geoserver, gateway. And if you are using the built-in database, you may set some CPU limits.  
-   It is not useful to set CPU limits for the other modules because they are not frequently accessed nor use a lot of CPU.
-- The memory requests and limits for all the modules.
+| Component           | CPU Requests | CPU Limits | RAM Requests | RAM Limits |
+|---------------------|--------------|------------|--------------|------------|
+| console             | 100m         | -          | 1Gi          | 1Gi        |
+| datafeeder          | 100m         | -          | 512Mi        | 512Mi      |
+| datafeeder-frontend | 50m          | -          | 128Mi        | 128Mi      |
+| geonetwork          | 200m         | 2000m      | 1512Mi       | 1512Mi     |
+| ogc-api-records     | 100m         | -          | 1Gi          | 1Gi        |
+| elasticsearch       | 200m         | 2000m      | 1512Mi       | 1512Mi     |
+| kibana              | 100m         | -          | 1Gi          | 1Gi        |
+| geoserver           | 1000m        | 4000m      | 2Gi          | 2Gi        |
+| header              | 50m          | -          | 512Mi        | 512Mi      |
+| mapstore            | 100m         | -          | 1Gi          | 1Gi        |
+| openldap            | 100m         | -          | 1Gi          | 1Gi        |
+| gateway             | 500m         | 4000m      | 1Gi          | 1Gi        |
+| database (PG)       | 200m         | -          | 512Mi        | 512Mi      |
+| smtp                | 50m          | -          | 64Mi         | 64Mi       |
 
-Here is a table with recommended values for a production environment with low usage:
+### Production Environment (Low Usage)
 
-|                     | CPU - Requests | CPU - Limits | RAM - Requests | RAM - Limits |
-|---------------------|----------------|--------------|----------------|--------------|
-| console             | 500m           | unset        | 2Gi            | 2Gi          |
-| datafeeder          | 200m           | unset        | 2Gi            | 2Gi          |
-| datafeeder-frontend | 100m           | unset        | 256Mi          | 256Mi        |
-| geonetwork          | 2000m          | 4000m        | 3Gi            | 3Gi          |
-| ogc-api-records     | 100m           | unset        | 2Gi            | 2Gi          |
-| elasticsearch       | 1000m          | 2000m        | 4Gi            | 4Gi          |
-| kibana              | 500m           | unset        | 2Gi            | 2Gi          |
-| geoserver           | 2000m          | 4000m        | 4Gi            | 4Gi          |
-| header              | 200m           | unset        | 1Gi            | 1Gi          |
-| mapstore            | 1000m          | unset        | 2Gi            | 2Gi          |
-| openldap            | 500m           | unset        | 2Gi            | 2Gi          |
-| gateway             | 2000m          | 4000m        | 3Gi            | 3Gi          |
-| database (PG)       | 2000m          | 4000m        | 2Gi            | 2Gi          |
-| smtp                | 200m           | unset        | 128Mi          | 128Mi        |
+| Component           | CPU Requests | CPU Limits | RAM Requests | RAM Limits |
+|---------------------|--------------|------------|--------------|------------|
+| console             | 500m         | -          | 2Gi          | 2Gi        |
+| datafeeder          | 200m         | -          | 2Gi          | 2Gi        |
+| datafeeder-frontend | 100m         | -          | 256Mi        | 256Mi      |
+| geonetwork          | 2000m        | 4000m      | 3Gi          | 3Gi        |
+| ogc-api-records     | 100m         | -          | 2Gi          | 2Gi        |
+| elasticsearch       | 1000m        | 2000m      | 4Gi          | 4Gi        |
+| kibana              | 500m         | -          | 2Gi          | 2Gi        |
+| geoserver           | 2000m        | 4000m      | 4Gi          | 4Gi        |
+| header              | 200m         | -          | 1Gi          | 1Gi        |
+| mapstore            | 1000m        | -          | 2Gi          | 2Gi        |
+| openldap            | 500m         | -          | 2Gi          | 2Gi        |
+| gateway             | 2000m        | 4000m      | 3Gi          | 3Gi        |
+| database (PG)       | 2000m        | 4000m      | 2Gi          | 2Gi        |
+| smtp                | 200m         | -          | 128Mi        | 128Mi      |
 
-Feel free to suggest modifications based on your use cases.
+**Note:** These are baseline recommendations. Production deployments should be tuned based on actual usage patterns, data volume, and traffic. Key components to monitor and adjust: GeoNetwork, Elasticsearch, GeoServer, Gateway, and the database.
 
-These values _should_ work for an average production with low usage, but you are strongly advised to document yourself on how to estimate resource consumption based on your data and platform traffic.
+## Additional Resources
+
+- [geOrchestra Documentation](https://docs.georchestra.org)
+- [GitHub Repository](https://github.com/georchestra/helm-charts)
+- [Issue Tracker](https://github.com/georchestra/helm-charts/issues)
