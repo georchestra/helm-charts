@@ -2,7 +2,7 @@
 - Add support for existing PVCs via existingClaim (#204)
 - Fix issue with podAnnotations (#208)
 - Switch image parameter to dedicated section (#134)
-  SEMI-BREAKING: You are advised to switch to the new format. The old format will be at one point.
+  SEMI-BREAKING: You are advised to switch to the new format. The old format will removed be at one point.
 
 # 1.14.0
 
