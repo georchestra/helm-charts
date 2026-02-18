@@ -62,13 +62,21 @@ Create the name of the service account to use
 {{- end }}
 
 {{/*
-Get the image for a webapp with backward compatibility for docker_image
+Get the image for a webapp with backward compatibility for docker_image and plain image string
 Usage: {{ include "georchestra.webappImage" $webapp }}
 Returns the full image string (repository:tag)
+Supports three formats:
+  - docker_image: "repo/image:tag"  (legacy string format)
+  - image: "repo/image:tag"         (legacy plain string format)
+  - image:                          (new map format)
+      repository: repo/image
+      tag: tag
 */}}
 {{- define "georchestra.webappImage" -}}
 {{- if .docker_image -}}
 {{- .docker_image -}}
+{{- else if kindIs "string" .image -}}
+{{- .image -}}
 {{- else -}}
 {{- printf "%s:%s" .image.repository .image.tag -}}
 {{- end -}}
@@ -80,6 +88,8 @@ Usage: {{ include "georchestra.webappImagePullPolicy" $webapp }}
 */}}
 {{- define "georchestra.webappImagePullPolicy" -}}
 {{- if .docker_image -}}
+IfNotPresent
+{{- else if kindIs "string" .image -}}
 IfNotPresent
 {{- else -}}
 {{- .image.pullPolicy | default "IfNotPresent" -}}
