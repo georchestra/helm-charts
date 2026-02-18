@@ -1,4 +1,5 @@
-{{- if .Values.georchestra.webapps.geonetwork.enabled -}}
+{{- $webapp := .Values.georchestra.webapps.geonetwork.kibana -}}
+{{- if and .Values.georchestra.webapps.geonetwork.enabled $webapp.enabled -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
