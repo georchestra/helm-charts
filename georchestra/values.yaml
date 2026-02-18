@@ -589,7 +589,7 @@ tooling:
   general:
     image:
       repository: alpine/git
-      tag: 2.49.1
+      tag: 2.52.0
   envsubst:
     image:
       repository: georchestra/k8s-initcontainer-envsubst
