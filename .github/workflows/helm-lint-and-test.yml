@@ -61,10 +61,10 @@ jobs:
         if: github.ref != '${{ github.event.repository.default_branch }}'
         run: |
           curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE="644" sh -
-          sudo dd if=/dev/zero of=/swapfile bs=1M count=8k status=progress
-          sudo chmod 0600 /swapfile
-          sudo mkswap /swapfile
-          sudo swapon /swapfile
+          sudo dd if=/dev/zero of=/swap bs=1M count=8k status=progress
+          sudo chmod 0600 /swap
+          sudo mkswap /swap
+          sudo swapon /swap
           free -h
           until KUBECONFIG=/etc/rancher/k3s/k3s.yaml kubectl get --raw='/readyz?verbose'; do echo "wait for k3s to finish"; done
 
