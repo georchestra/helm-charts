@@ -56,7 +56,7 @@ spec:
           env:
             - name: REDIS_REPLICATION_MODE
               value: master
-          {{- with .Values.redis.extra_environment }}
+          {{- with .Values.redis.extraEnvironment }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
           volumeMounts:

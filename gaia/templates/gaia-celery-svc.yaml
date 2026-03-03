@@ -5,9 +5,9 @@ metadata:
   labels:
     {{- include "helm-gaia.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.gaia_celery.service.type }}
+  type: {{ .Values.gaiaCelery.service.type }}
   ports:
-    - port: {{ .Values.gaia_celery.service.port }}
+    - port: {{ .Values.gaiaCelery.service.port }}
       targetPort: http
       protocol: TCP
   selector:

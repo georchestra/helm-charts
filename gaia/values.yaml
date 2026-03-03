@@ -1,4 +1,4 @@
-gaia_celery:
+gaiaCelery:
   enabled: true
   replicaCount: 1
   image:
@@ -8,7 +8,7 @@ gaia_celery:
     pullPolicy: IfNotPresent
   tolerations: []
   affinity: {}
-  extra_environment: []
+  extraEnvironment: []
   service:
     type: ClusterIP
     port: 5002
@@ -30,14 +30,7 @@ gaia:
     pullPolicy: IfNotPresent
   tolerations: []
   affinity: {}
-  # A custom livenessProbe can be passed, as follows:
-  # custom_liveness_probe:
-  #   httpGet:
-  #     path: /health
-  #     port: http
-  #   initialDelaySeconds: 60
-  #   [...]
-  extra_environment: []
+  extraEnvironment: []
   service:
     type: ClusterIP
     port: 5002
@@ -58,14 +51,7 @@ redis:
     pullPolicy: IfNotPresent
   tolerations: []
   affinity: {}
-  # A custom livenessProbe can be passed, as follows:
-  # custom_liveness_probe:
-  #   httpGet:
-  #     path: /health
-  #     port: http
-  #   initialDelaySeconds: 60
-  #   [...]
-  extra_environment: []
+  extraEnvironment: []
   service:
     type: ClusterIP
     port: 6379
@@ -77,10 +63,10 @@ redis:
     requests:
       cpu: 100m
       memory: 128Mi
-  redis_data:
-    # pv_name: redis_data
+  redisData:
+    # pvName: redis_data
     size: 1Gi
-    # storage_class_name: default or "-" for empty storageClassName
+    # storageClassName: default or "-" for empty storageClassName
     accessModes:
     - ReadWriteOnce
 datadir:

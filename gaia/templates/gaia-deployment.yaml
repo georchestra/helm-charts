@@ -59,7 +59,7 @@ spec:
               value: "redis://{{ include "helm-gaia.fullname" . }}-gaia-redis-svc:{{ .Values.redis.service.port }}/1"
             {{- include "gaia.bootstrap_gaia_database_envs" . | nindent 12 }}
             {{- include "gaia.service-envs" . | nindent 12 }}
-          {{- with .Values.gaia.extra_environment }}
+          {{- with .Values.gaia.extraEnvironment }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
           volumeMounts:
@@ -93,10 +93,10 @@ spec:
           persistentVolumeClaim:
             claimName: {{ .Values.volumes.mapstoreDatadir.name }}
 
-        {{- if .Values.datadir.git.ssh_secret }}
+        {{- if .Values.datadir.git.sshSecret }}
         - name: ssh-secret
           secret:
-            secretName: {{ .Values.datadir.git.ssh_secret }}
+            secretName: {{ .Values.datadir.git.sshSecret }}
             defaultMode: 0400
         {{- end }}
       {{- with .Values.gaia.nodeSelector }}
