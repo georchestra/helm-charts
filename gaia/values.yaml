@@ -71,9 +71,6 @@ redis:
     accessModes:
     - ReadWriteOnce
 datadir:
-  volume:
-  - name: georchestra-datadir
-    emptyDir: {}
   image:
     repository: bitnami/git
     tag: latest

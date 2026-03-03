@@ -44,11 +44,6 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "helm-gaia.selectorLabels" -}}
-app.kubernetes.io/name: {{ .Release.Name }}
-app.kubernetes.io/instance: {{ include "helm-gaia.name" . }}
-{{- end }}
-
 {{- define "helm-gaia.selectorLabelsCelery" -}}
 app.kubernetes.io/name: {{ .Release.Name }}
 app.kubernetes.io/instance: {{ include "helm-gaia.name" . }}-gaia-celery
@@ -62,15 +57,4 @@ app.kubernetes.io/instance: {{ include "helm-gaia.name" . }}-gaia
 {{- define "helm-gaia.selectorLabelsRedis" -}}
 app.kubernetes.io/name: {{ .Release.Name }}
 app.kubernetes.io/instance: {{ include "helm-gaia.name" . }}-gaia-redis
-{{- end }}
-
-{{/*
-Create the name of the service account to use
-*/}}
-{{- define "helm-gaia.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "helm-gaia.fullname" .) .Values.serviceAccount.name }}
-{{- else }}
-{{- default "default" .Values.serviceAccount.name }}
-{{- end }}
 {{- end }}
