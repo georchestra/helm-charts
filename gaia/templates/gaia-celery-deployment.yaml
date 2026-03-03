@@ -45,17 +45,11 @@ spec:
             {{- toYaml .Values.gaiaCelery.securityContext | nindent 12 }}
           image: "{{ .Values.gaiaCelery.image.repository }}:{{ .Values.gaiaCelery.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.gaiaCelery.image.pullPolicy }}
-          ports:
-            - name: http
-              containerPort: 5002
-              protocol: TCP
           resources:
             {{- toYaml .Values.gaiaCelery.resources | nindent 12 }}
           env:
             - name: FLASK_APP
               value: geordash
-            - name:  FLASK_OPTS
-              value: "-h 0.0.0.0 -p 5002"
             - name: REDISURL
               value: "redis://{{ include "helm-gaia.fullname" . }}-gaia-redis-svc:{{ .Values.redis.service.port }}/1"
             {{- include "gaia.bootstrap_gaia_database_envs" . | nindent 12 }}
