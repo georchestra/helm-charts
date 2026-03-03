@@ -11,5 +11,4 @@ spec:
       targetPort: http
       protocol: TCP
   selector:
-    app.kubernetes.io/name: {{ include "helm-gaia.fullname" . }}
-    app.kubernetes.io/instance: {{ include "helm-gaia.fullname" . }}-gaia-celery
+    {{- include "helm-gaia.selectorLabelsCelery" . | nindent 4 }}

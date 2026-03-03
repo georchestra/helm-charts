@@ -11,5 +11,4 @@ spec:
       targetPort: redis
       protocol: TCP
   selector:
-     app.kubernetes.io/name: {{ include "helm-gaia.fullname" . }}
-     app.kubernetes.io/instance: {{ include "helm-gaia.fullname" . }}-gaia-redis
+    {{- include "helm-gaia.selectorLabelsRedis" . | nindent 4 }}
