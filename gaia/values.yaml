@@ -23,13 +23,6 @@ gaia_celery:
 gaia:
   enabled: true
   replicaCount: 1
-  # A custom livenessProbe can be passed, as follows:
-  # custom_liveness_probe:
-  #   httpGet:
-  #     path: /health
-  #     port: http
-  #   initialDelaySeconds: 60
-  #   [...]
   image:
     repository: georchestra/gaia
     tag: latest
@@ -59,13 +52,6 @@ gaia:
 redis:
   enabled: true
   replicaCount: 1
-  # A custom livenessProbe can be passed, as follows:
-  # custom_liveness_probe:
-  #   httpGet:
-  #     path: /health
-  #     port: http
-  #   initialDelaySeconds: 60
-  #   [...]
   image:
     repository: redis:8.2.2-alpine
     imagePullSecrets: []
