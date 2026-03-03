@@ -9,23 +9,15 @@ metadata:
     helm.sh/resource-policy: "keep"
 spec:
   accessModes:
-  {{- if.Values.redis.redisData.accessModes }}
   {{- range .Values.redis.redisData.accessModes }}
   - {{ . | quote }}
   {{- end }}
-  {{- else }}
-  {{- range .Values.redis.redisData.accessModes }}
-  - {{ . | quote }}
-  {{- end }}
-  {{- end }}
+  {{- if .Values.redis.redisData.storageClassName }}
   {{- if (eq "-" .Values.redis.redisData.storageClassName) }}
   storageClassName: ""
-  {{- else if .Values.redis.redisData.storageClassName }}
+  {{- else }}
   storageClassName: {{ .Values.redis.redisData.storageClassName }}
-  {{- else if (eq "-" .Values.redis.redisData.storageClassName) }}
-  storageClassName: ""
-  {{- else if .Values.redis.redisData.storageClassName }}
-  storageClassName: {{ .Values.redis.redisData.storageClassName }}
+  {{- end }}
   {{- end }}
   {{- if .Values.redis.redisData.pvName }}
   volumeName: {{ .Values.redis.redisData.pvName }}
