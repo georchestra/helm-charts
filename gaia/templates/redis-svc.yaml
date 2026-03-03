@@ -5,10 +5,10 @@ metadata:
   labels:
     {{- include "helm-gaia.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.gaia.service.type }}
+  type: {{ .Values.redis.service.type }}
   ports:
     - port: {{ .Values.redis.service.port }}
-      targetPort: {{ .Values.redis.service.port }}
+      targetPort: redis
       protocol: TCP
   selector:
      app.kubernetes.io/name: {{ include "helm-gaia.fullname" . }}
