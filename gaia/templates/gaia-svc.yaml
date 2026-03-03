@@ -5,6 +5,10 @@ metadata:
   name: {{ include "helm-gaia.fullname" . }}-gaia-svc
   labels:
     {{- include "helm-gaia.labels" . | nindent 4 }}
+  {{- with .Values.gaia.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   type: {{ .Values.gaia.service.type }}
   ports:

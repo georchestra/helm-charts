@@ -5,6 +5,10 @@ metadata:
   name: {{ include "helm-gaia.fullname" . }}-gaia-celery-svc
   labels:
     {{- include "helm-gaia.labels" . | nindent 4 }}
+  {{- with .Values.gaiaCelery.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   type: {{ .Values.gaiaCelery.service.type }}
   ports:

@@ -5,6 +5,10 @@ metadata:
   name: {{ include "helm-gaia.fullname" . }}-gaia-redis-svc
   labels:
     {{- include "helm-gaia.labels" . | nindent 4 }}
+  {{- with .Values.redis.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   type: {{ .Values.redis.service.type }}
   ports:
