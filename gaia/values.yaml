@@ -1,10 +1,10 @@
 gaiaCelery:
   enabled: true
   replicaCount: 1
+  imagePullSecrets: []
   image:
     repository: georchestra/gaia-celery
     tag: latest
-    imagePullSecrets: []
     pullPolicy: IfNotPresent
   tolerations: []
   affinity: {}
@@ -23,10 +23,10 @@ gaiaCelery:
 gaia:
   enabled: true
   replicaCount: 1
+  imagePullSecrets: []
   image:
     repository: georchestra/gaia
     tag: latest
-    imagePullSecrets: []
     pullPolicy: IfNotPresent
   tolerations: []
   affinity: {}
@@ -45,9 +45,9 @@ gaia:
 redis:
   enabled: true
   replicaCount: 1
+  imagePullSecrets: []
   image:
     repository: redis:8.2.2-alpine
-    imagePullSecrets: []
     pullPolicy: IfNotPresent
   tolerations: []
   affinity: {}

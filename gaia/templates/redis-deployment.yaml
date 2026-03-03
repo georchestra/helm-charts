@@ -78,7 +78,3 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- if .Values.redis.image.imagePullSecrets }}
-      imagePullSecrets:
-        - name: {{ .Values.redis.image.imagePullSecrets }}
-      {{- end }}

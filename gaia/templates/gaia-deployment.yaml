@@ -111,7 +111,3 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- if .Values.gaia.image.imagePullSecrets }}
-      imagePullSecrets:
-        - name: {{ .Values.gaia.image.imagePullSecrets }}
-      {{- end }}
