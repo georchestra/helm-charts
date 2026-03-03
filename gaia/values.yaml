@@ -47,7 +47,8 @@ redis:
   replicaCount: 1
   imagePullSecrets: []
   image:
-    repository: redis:8.2.2-alpine
+    repository: redis
+    tag: 8.2.2-alpine
     pullPolicy: IfNotPresent
   tolerations: []
   affinity: {}

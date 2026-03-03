@@ -30,7 +30,7 @@ spec:
         - name: {{ .Chart.Name }}-redis
           securityContext:
             {{- toYaml .Values.redis.securityContext | nindent 12 }}
-          image: "{{ .Values.redis.image.repository }}"
+          image: "{{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}"
           imagePullPolicy: {{ .Values.redis.image.pullPolicy }}
           ports:
             - name: redis
