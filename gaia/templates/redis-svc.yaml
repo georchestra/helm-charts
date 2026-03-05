@@ -1,15 +1,20 @@
+{{- if .Values.redis.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "helm-gaia.fullname" . }}-gaia-redis-svc
   labels:
     {{- include "helm-gaia.labels" . | nindent 4 }}
+  {{- with .Values.redis.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
-  type: {{ .Values.gaia.service.type }}
+  type: {{ .Values.redis.service.type }}
   ports:
     - port: {{ .Values.redis.service.port }}
-      targetPort: {{ .Values.redis.service.port }}
+      targetPort: redis
       protocol: TCP
   selector:
-     app.kubernetes.io/name: {{ include "helm-gaia.fullname" . }}
-     app.kubernetes.io/instance: {{ include "helm-gaia.fullname" . }}-gaia-redis
+    {{- include "helm-gaia.selectorLabelsRedis" . | nindent 4 }}
+{{- end }}

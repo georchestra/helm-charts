@@ -1,3 +1,4 @@
+{{- if .Values.gaiaCelery.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6,13 +7,13 @@ metadata:
     {{- include "helm-gaia.selectorLabelsCelery" . | nindent 4 }}
     {{- include "helm-gaia.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.gaia_celery.replicaCount }}
+  replicas: {{ .Values.gaiaCelery.replicaCount }}
   selector:
     matchLabels:
       {{- include "helm-gaia.selectorLabelsCelery" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.gaia_celery.podAnnotations }}
+      {{- with .Values.gaiaCelery.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -32,34 +33,28 @@ spec:
         volumeMounts:
           - mountPath: /geordash/workdir/
             name: gaia-celery-scheduler
-      {{- with .Values.gaia_celery.imagePullSecrets }}
+      {{- with .Values.gaiaCelery.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       securityContext:
-        {{- toYaml .Values.gaia_celery.podSecurityContext | nindent 8 }}
+        {{- toYaml .Values.gaiaCelery.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}-celery
           securityContext:
-            {{- toYaml .Values.gaia_celery.securityContext | nindent 12 }}
-          image: "{{ .Values.gaia_celery.image.repository }}:{{ .Values.gaia_celery.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.gaia_celery.image.pullPolicy }}
-          ports:
-            - name: http
-              containerPort: 5002
-              protocol: TCP
+            {{- toYaml .Values.gaiaCelery.securityContext | nindent 12 }}
+          image: "{{ .Values.gaiaCelery.image.repository }}:{{ .Values.gaiaCelery.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.gaiaCelery.image.pullPolicy }}
           resources:
-            {{- toYaml .Values.gaia_celery.resources | nindent 12 }}
+            {{- toYaml .Values.gaiaCelery.resources | nindent 12 }}
           env:
             - name: FLASK_APP
               value: geordash
-            - name:  FLASK_OPTS
-              value: "-h 0.0.0.0 -p 5002"
             - name: REDISURL
-              value: "redis://{{ include "helm-gaia.fullname" . }}-gaia-redis-svc:6379/1"
+              value: "redis://{{ include "helm-gaia.fullname" . }}-gaia-redis-svc:{{ .Values.redis.service.port }}/1"
             {{- include "gaia.bootstrap_gaia_database_envs" . | nindent 12 }}
             {{- include "gaia.service-envs" . | nindent 12 }}
-          {{- with .Values.gaia_celery.extra_environment }}
+          {{- with .Values.gaiaCelery.extraEnvironment }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
           volumeMounts:
@@ -97,25 +92,22 @@ spec:
           persistentVolumeClaim:
             claimName: {{ .Values.volumes.mapstoreDatadir.name }}
 
-        {{- if .Values.datadir.git.ssh_secret }}
+        {{- if .Values.datadir.git.sshSecret }}
         - name: ssh-secret
           secret:
-            secretName: {{ .Values.datadir.git.ssh_secret }}
+            secretName: {{ .Values.datadir.git.sshSecret }}
             defaultMode: 0400
         {{- end }}
-      {{- with .Values.gaia_celery.nodeSelector }}
+      {{- with .Values.gaiaCelery.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.gaia_celery.affinity }}
+      {{- with .Values.gaiaCelery.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.gaia_celery.tolerations }}
+      {{- with .Values.gaiaCelery.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- if .Values.gaia_celery.image.imagePullSecrets }}
-      imagePullSecrets:
-        - name: {{ .Values.gaia_celery.image.imagePullSecrets }}
-      {{- end }}
+{{- end }}

@@ -1,3 +1,4 @@
+{{- if .Values.redis.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -29,16 +30,13 @@ spec:
         - name: {{ .Chart.Name }}-redis
           securityContext:
             {{- toYaml .Values.redis.securityContext | nindent 12 }}
-          image: "{{ .Values.redis.image.repository }}"
+          image: "{{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}"
           imagePullPolicy: {{ .Values.redis.image.pullPolicy }}
           ports:
             - name: redis
               containerPort: 6379
               protocol: TCP
           livenessProbe:
-          {{- if .Values.redis.custom_liveness_probe -}}
-          {{ .Values.redis.custom_liveness_probe | toYaml | nindent 12 }}
-          {{- else }}
             tcpSocket:
               port: redis
             initialDelaySeconds: 30
@@ -46,7 +44,6 @@ spec:
             periodSeconds: 5
             failureThreshold: 5
             successThreshold: 1
-          {{- end }}
           readinessProbe:
             exec:
               command:
@@ -60,7 +57,7 @@ spec:
           env:
             - name: REDIS_REPLICATION_MODE
               value: master
-          {{- with .Values.redis.extra_environment }}
+          {{- with .Values.redis.extraEnvironment }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
           volumeMounts:
@@ -82,7 +79,4 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- if .Values.redis.image.imagePullSecrets }}
-      imagePullSecrets:
-        - name: {{ .Values.redis.image.imagePullSecrets }}
-      {{- end }}
+{{- end }}
