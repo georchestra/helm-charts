@@ -4,13 +4,14 @@ kind: Deployment
 metadata:
   name: {{ include "helm-gaia.fullname" . }}-gaia-celery-deployment
   labels:
-    {{- include "helm-gaia.selectorLabelsCelery" . | nindent 4 }}
     {{- include "helm-gaia.labels" . | nindent 4 }}
+    app.kubernetes.io/component: {{ include "helm-gaia.fullname" . }}-celery
 spec:
   replicas: {{ .Values.gaiaCelery.replicaCount }}
   selector:
     matchLabels:
-      {{- include "helm-gaia.selectorLabelsCelery" . | nindent 6 }}
+      {{- include "helm-gaia.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: {{ include "helm-gaia.fullname" . }}-celery
   template:
     metadata:
       {{- with .Values.gaiaCelery.podAnnotations }}
@@ -18,7 +19,8 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "helm-gaia.selectorLabelsCelery" . | nindent 8 }}
+        {{- include "helm-gaia.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: {{ include "helm-gaia.fullname" . }}-celery
     spec:
       initContainers:
       {{- if .Values.datadir.git.url }}

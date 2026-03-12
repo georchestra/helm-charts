@@ -16,5 +16,6 @@ spec:
       targetPort: http
       protocol: TCP
   selector:
-    {{- include "helm-gaia.selectorLabelsBack" . | nindent 4 }}
+    {{- include "helm-gaia.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: {{ include "helm-gaia.fullname" . }}-back
 {{- end }}

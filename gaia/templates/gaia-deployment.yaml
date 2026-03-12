@@ -4,13 +4,14 @@ kind: Deployment
 metadata:
   name: {{ include "helm-gaia.fullname" . }}-gaia-deployment
   labels:
-    {{- include "helm-gaia.selectorLabelsBack" . | nindent 4 }}
     {{- include "helm-gaia.labels" . | nindent 4 }}
+    app.kubernetes.io/component: {{ include "helm-gaia.fullname" . }}-back
 spec:
   replicas: {{ .Values.gaia.replicaCount }}
   selector:
     matchLabels:
-      {{- include "helm-gaia.selectorLabelsBack" . | nindent 6 }}
+      {{- include "helm-gaia.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: {{ include "helm-gaia.fullname" . }}-back
   template:
     metadata:
       {{- with .Values.gaia.podAnnotations }}
@@ -18,7 +19,8 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "helm-gaia.selectorLabelsBack" . | nindent 8 }}
+        {{- include "helm-gaia.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: {{ include "helm-gaia.fullname" . }}-back
     spec:
       {{- if .Values.datadir.git.url }}
       initContainers:

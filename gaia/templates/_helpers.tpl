@@ -35,6 +35,7 @@ Common labels
 */}}
 {{- define "helm-gaia.labels" -}}
 helm.sh/chart: {{ include "helm-gaia.chart" . }}
+{{ include "helm-gaia.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -44,17 +45,18 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "helm-gaia.selectorLabelsCelery" -}}
-app.kubernetes.io/name: {{ .Release.Name }}
-app.kubernetes.io/instance: {{ include "helm-gaia.name" . }}-gaia-celery
+{{- define "helm-gaia.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "helm-gaia.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
-{{- define "helm-gaia.selectorLabelsBack" -}}
-app.kubernetes.io/name: {{ .Release.Name }}
-app.kubernetes.io/instance: {{ include "helm-gaia.name" . }}-gaia
+{{/*
+Create the name of the service account to use
+*/}}
+{{- define "helm-gaia.serviceAccountName" -}}
+{{- if .Values.serviceAccount.create }}
+{{- default (include "helm-gaia.fullname" .) .Values.serviceAccount.name }}
+{{- else }}
+{{- default "default" .Values.serviceAccount.name }}
 {{- end }}
-
-{{- define "helm-gaia.selectorLabelsRedis" -}}
-app.kubernetes.io/name: {{ .Release.Name }}
-app.kubernetes.io/instance: {{ include "helm-gaia.name" . }}-gaia-redis
 {{- end }}
