@@ -78,6 +78,7 @@ datadir:
   git:
     url: https://github.com/georchestra/datadir.git
     ref: docker-master
+    # sshSecret: ""
 georchestra:
   releaseName: georchestra
   fqdn: georchestra-127-0-0-1.nip.io
