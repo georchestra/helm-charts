@@ -1,3 +1,4 @@
+{{- if .Values.redis.enabled }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -8,27 +9,20 @@ metadata:
     helm.sh/resource-policy: "keep"
 spec:
   accessModes:
-  {{- if.Values.redis.redis_data.accessModes }}
-  {{- range .Values.redis.redis_data.accessModes }}
+  {{- range .Values.redis.redisData.accessModes }}
   - {{ . | quote }}
   {{- end }}
+  {{- if .Values.redis.redisData.storageClassName }}
+  {{- if (eq "-" .Values.redis.redisData.storageClassName) }}
+  storageClassName: ""
   {{- else }}
-  {{- range .Values.redis.redis_data.accessModes }}
-  - {{ . | quote }}
+  storageClassName: {{ .Values.redis.redisData.storageClassName }}
   {{- end }}
   {{- end }}
-  {{- if (eq "-" .Values.redis.redis_data.storage_class_name) }}
-  storageClassName: ""
-  {{- else if .Values.redis.redis_data.storage_class_name }}
-  storageClassName: {{ .Values.redis.redis_data.storage_class_name }}
-  {{- else if (eq "-" .Values.redis.redis_data.storage_class_name) }}
-  storageClassName: ""
-  {{- else if .Values.redis.redis_data.storage_class_name }}
-  storageClassName: {{ .Values.redis.redis_data.storage_class_name }}
-  {{- end }}
-  {{- if .Values.redis.redis_data.pv_name }}
-  volumeName: {{ .Values.redis.redis_data.pv_name }}
+  {{- if .Values.redis.redisData.pvName }}
+  volumeName: {{ .Values.redis.redisData.pvName }}
   {{- end }}
   resources:
     requests:
-      storage: {{ .Values.redis.redis_data.size }}
+      storage: {{ .Values.redis.redisData.size }}
+{{- end }}

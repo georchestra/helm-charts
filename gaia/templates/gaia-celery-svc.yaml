@@ -1,15 +1,21 @@
+{{- if .Values.gaiaCelery.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "helm-gaia.fullname" . }}-gaia-celery-svc
   labels:
     {{- include "helm-gaia.labels" . | nindent 4 }}
+  {{- with .Values.gaiaCelery.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
-  type: {{ .Values.gaia_celery.service.type }}
+  type: {{ .Values.gaiaCelery.service.type }}
   ports:
-    - port: {{ .Values.gaia_celery.service.port }}
-      targetPort: {{ .Values.gaia_celery.service.port }}
+    - port: {{ .Values.gaiaCelery.service.port }}
+      targetPort: http
       protocol: TCP
   selector:
-    app.kubernetes.io/name: {{ include "helm-gaia.fullname" . }}
-    app.kubernetes.io/instance: {{ include "helm-gaia.fullname" . }}-gaia-celery
+    {{- include "helm-gaia.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: {{ include "helm-gaia.fullname" . }}-celery
+{{- end }}

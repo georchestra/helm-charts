@@ -35,6 +35,7 @@ Common labels
 */}}
 {{- define "helm-gaia.labels" -}}
 helm.sh/chart: {{ include "helm-gaia.chart" . }}
+{{ include "helm-gaia.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,23 +46,8 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 Selector labels
 */}}
 {{- define "helm-gaia.selectorLabels" -}}
-app.kubernetes.io/name: {{ .Release.Name }}
-app.kubernetes.io/instance: {{ include "helm-gaia.name" . }}
-{{- end }}
-
-{{- define "helm-gaia.selectorLabelsCelery" -}}
-app.kubernetes.io/name: {{ .Release.Name }}
-app.kubernetes.io/instance: {{ include "helm-gaia.name" . }}-gaia-celery
-{{- end }}
-
-{{- define "helm-gaia.selectorLabelsBack" -}}
-app.kubernetes.io/name: {{ .Release.Name }}
-app.kubernetes.io/instance: {{ include "helm-gaia.name" . }}-gaia
-{{- end }}
-
-{{- define "helm-gaia.selectorLabelsRedis" -}}
-app.kubernetes.io/name: {{ .Release.Name }}
-app.kubernetes.io/instance: {{ include "helm-gaia.name" . }}-gaia-redis
+app.kubernetes.io/name: {{ include "helm-gaia.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*

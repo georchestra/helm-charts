@@ -1,15 +1,17 @@
+{{- if .Values.redis.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "helm-gaia.fullname" . }}-gaia-redis-deployment
   labels:
-    {{- include "helm-gaia.selectorLabelsRedis" . | nindent 4 }}
     {{- include "helm-gaia.labels" . | nindent 4 }}
+    app.kubernetes.io/component: {{ include "helm-gaia.fullname" . }}-redis
 spec:
   replicas: {{ .Values.redis.replicaCount }}
   selector:
     matchLabels:
-      {{- include "helm-gaia.selectorLabelsRedis" . | nindent 6 }}
+      {{- include "helm-gaia.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: {{ include "helm-gaia.fullname" . }}-redis
   template:
     metadata:
       {{- with .Values.redis.podAnnotations }}
@@ -17,7 +19,8 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "helm-gaia.selectorLabelsRedis" . | nindent 8 }}
+        {{- include "helm-gaia.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: {{ include "helm-gaia.fullname" . }}-redis
     spec:
       {{- with .Values.redis.imagePullSecrets }}
       imagePullSecrets:
@@ -29,16 +32,13 @@ spec:
         - name: {{ .Chart.Name }}-redis
           securityContext:
             {{- toYaml .Values.redis.securityContext | nindent 12 }}
-          image: "{{ .Values.redis.image.repository }}"
+          image: "{{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}"
           imagePullPolicy: {{ .Values.redis.image.pullPolicy }}
           ports:
             - name: redis
               containerPort: 6379
               protocol: TCP
           livenessProbe:
-          {{- if .Values.redis.custom_liveness_probe -}}
-          {{ .Values.redis.custom_liveness_probe | toYaml | nindent 12 }}
-          {{- else }}
             tcpSocket:
               port: redis
             initialDelaySeconds: 30
@@ -46,7 +46,6 @@ spec:
             periodSeconds: 5
             failureThreshold: 5
             successThreshold: 1
-          {{- end }}
           readinessProbe:
             exec:
               command:
@@ -60,7 +59,7 @@ spec:
           env:
             - name: REDIS_REPLICATION_MODE
               value: master
-          {{- with .Values.redis.extra_environment }}
+          {{- with .Values.redis.extraEnvironment }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
           volumeMounts:
@@ -82,7 +81,4 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- if .Values.redis.image.imagePullSecrets }}
-      imagePullSecrets:
-        - name: {{ .Values.redis.image.imagePullSecrets }}
-      {{- end }}
+{{- end }}
