@@ -74,7 +74,10 @@ spec:
         ports:
         - containerPort: 8080
           name: http
-        {{- if $webapp.livenessProbe }}
+        {{- if $webapp.probes.livenessProbe }}
+        livenessProbe:
+          {{- $webapp.probes.livenessProbe | toYaml | nindent 10 }}
+        {{- else if $webapp.livenessProbe }}
         {{ $webapp.livenessProbe | toYaml | nindent 8 }}
         {{- else }}
         livenessProbe:
@@ -84,6 +87,14 @@ spec:
           periodSeconds: 10
           timeoutSeconds: 5
         {{- end }}
+        {{- if $webapp.probes.readinessProbe }}
+        readinessProbe:
+          {{- $webapp.probes.readinessProbe | toYaml | nindent 10 }}
+        {{- end }}
+        {{- if $webapp.probes.startupProbe }}
+        startupProbe:
+          {{- $webapp.probes.startupProbe | toYaml | nindent 10 }}
+        {{- else }}
         startupProbe:
           failureThreshold: 5
           httpGet:
@@ -93,6 +104,7 @@ spec:
           periodSeconds: 15
           successThreshold: 1
           timeoutSeconds: 1
+        {{- end }}
         resources:
           {{- toYaml $webapp.resources | nindent 10 }}
       {{- if $webapp.extraContainers }}

@@ -56,6 +56,10 @@ spec:
         volumeMounts:
         - name: rabbitmq-data
           mountPath: /var/lib/rabbitmq
+        {{- if $rabbitmq.probes.livenessProbe }}
+        livenessProbe:
+          {{- $rabbitmq.probes.livenessProbe | toYaml | nindent 10 }}
+        {{- else }}
         livenessProbe:
           exec:
             command:
@@ -66,6 +70,11 @@ spec:
           periodSeconds: 30
           timeoutSeconds: 20
           failureThreshold: 6
+        {{- end }}
+        {{- if $rabbitmq.probes.readinessProbe }}
+        readinessProbe:
+          {{- $rabbitmq.probes.readinessProbe | toYaml | nindent 10 }}
+        {{- else }}
         readinessProbe:
           exec:
             command:
@@ -76,6 +85,11 @@ spec:
           periodSeconds: 30
           timeoutSeconds: 20
           failureThreshold: 3
+        {{- end }}
+        {{- if $rabbitmq.probes.startupProbe }}
+        startupProbe:
+          {{- $rabbitmq.probes.startupProbe | toYaml | nindent 10 }}
+        {{- end }}
         resources:
           {{- toYaml $rabbitmq.resources | nindent 10 }}
       volumes:

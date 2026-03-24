@@ -65,17 +65,31 @@ spec:
           {{- if $webapp.extra_environment }}
           {{- $webapp.extra_environment | toYaml | nindent 10 }}
           {{- end }}
+        {{- if $webapp.probes.livenessProbe }}
+        livenessProbe:
+          {{- $webapp.probes.livenessProbe | toYaml | nindent 10 }}
+        {{- else }}
         livenessProbe:
           httpGet:
             path: /geonetwork/srv/eng/catalog.search
             port: 8080
           periodSeconds: 10
           timeoutSeconds: 5
+        {{- end }}
+        {{- if $webapp.probes.readinessProbe }}
+        readinessProbe:
+          {{- $webapp.probes.readinessProbe | toYaml | nindent 10 }}
+        {{- end }}
+        {{- if $webapp.probes.startupProbe }}
+        startupProbe:
+          {{- $webapp.probes.startupProbe | toYaml | nindent 10 }}
+        {{- else }}
         startupProbe:
           tcpSocket:
             port: 8080
           failureThreshold: 5
           periodSeconds: 50
+        {{- end }}
         resources:
           {{- toYaml $webapp.resources | nindent 10 }}
       {{- if $webapp.extraContainers }}

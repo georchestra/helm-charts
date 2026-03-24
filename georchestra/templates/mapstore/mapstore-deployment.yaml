@@ -68,17 +68,31 @@ spec:
         lifecycle:
           {{- toYaml . | nindent 10 }}
         {{- end }}
+        {{- if $webapp.probes.livenessProbe }}
+        livenessProbe:
+          {{- $webapp.probes.livenessProbe | toYaml | nindent 10 }}
+        {{- else }}
         livenessProbe:
           httpGet:
             path: /mapstore/configs/config.json
             port: 8080
           periodSeconds: 10
+        {{- end }}
+        {{- if $webapp.probes.readinessProbe }}
+        readinessProbe:
+          {{- $webapp.probes.readinessProbe | toYaml | nindent 10 }}
+        {{- end }}
+        {{- if $webapp.probes.startupProbe }}
+        startupProbe:
+          {{- $webapp.probes.startupProbe | toYaml | nindent 10 }}
+        {{- else }}
         startupProbe:
           httpGet:
             path: /mapstore/configs/config.json
             port: 8080
           failureThreshold: 5
           periodSeconds: 15
+        {{- end }}
         resources:
           {{- toYaml $webapp.resources | nindent 10 }}
       {{- if $webapp.extraContainers }}
