@@ -65,7 +65,7 @@ spec:
           {{- if $webapp.extra_environment }}
           {{- $webapp.extra_environment | toYaml | nindent 10 }}
           {{- end }}
-        {{- if $webapp.probes.livenessProbe }}
+        {{- if and $webapp.probes $webapp.probes.livenessProbe }}
         livenessProbe:
           {{- $webapp.probes.livenessProbe | toYaml | nindent 10 }}
         {{- else }}
@@ -76,11 +76,11 @@ spec:
           periodSeconds: 10
           timeoutSeconds: 5
         {{- end }}
-        {{- if $webapp.probes.readinessProbe }}
+        {{- if and $webapp.probes $webapp.probes.readinessProbe }}
         readinessProbe:
           {{- $webapp.probes.readinessProbe | toYaml | nindent 10 }}
         {{- end }}
-        {{- if $webapp.probes.startupProbe }}
+        {{- if and $webapp.probes $webapp.probes.startupProbe }}
         startupProbe:
           {{- $webapp.probes.startupProbe | toYaml | nindent 10 }}
         {{- else }}

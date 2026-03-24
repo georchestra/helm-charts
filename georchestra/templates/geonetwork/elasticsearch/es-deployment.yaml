@@ -55,7 +55,7 @@ spec:
         ports:
         - containerPort: 9200
           name: elastic
-        {{- if $webapp.probes.livenessProbe }}
+        {{- if and $webapp.probes $webapp.probes.livenessProbe }}
         livenessProbe:
           {{- $webapp.probes.livenessProbe | toYaml | nindent 10 }}
         {{- else }}
@@ -71,7 +71,7 @@ spec:
           failureThreshold: 3
           successThreshold: 1
         {{- end }}
-        {{- if $webapp.probes.readinessProbe }}
+        {{- if and $webapp.probes $webapp.probes.readinessProbe }}
         readinessProbe:
           {{- $webapp.probes.readinessProbe | toYaml | nindent 10 }}
         {{- else }}
@@ -89,7 +89,7 @@ spec:
           failureThreshold: 3
           successThreshold: 1
         {{- end }}
-        {{- if $webapp.probes.startupProbe }}
+        {{- if and $webapp.probes $webapp.probes.startupProbe }}
         startupProbe:
           {{- $webapp.probes.startupProbe | toYaml | nindent 10 }}
         {{- end }}

@@ -44,7 +44,7 @@ spec:
         ports:
         - containerPort: 5601
           name: kibana
-        {{- if $webapp.probes.livenessProbe }}
+        {{- if and $webapp.probes $webapp.probes.livenessProbe }}
         livenessProbe:
           {{- $webapp.probes.livenessProbe | toYaml | nindent 10 }}
         {{- else }}
@@ -58,7 +58,7 @@ spec:
           timeoutSeconds: 5
           failureThreshold: 3
         {{- end }}
-        {{- if $webapp.probes.readinessProbe }}
+        {{- if and $webapp.probes $webapp.probes.readinessProbe }}
         readinessProbe:
           {{- $webapp.probes.readinessProbe | toYaml | nindent 10 }}
         {{- else }}
@@ -72,7 +72,7 @@ spec:
           timeoutSeconds: 3
           failureThreshold: 3
         {{- end }}
-        {{- if $webapp.probes.startupProbe }}
+        {{- if and $webapp.probes $webapp.probes.startupProbe }}
         startupProbe:
           {{- $webapp.probes.startupProbe | toYaml | nindent 10 }}
         {{- end }}
