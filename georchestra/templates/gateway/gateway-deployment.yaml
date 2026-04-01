@@ -46,6 +46,22 @@ spec:
           {{- if .Values.rabbitmq.enabled -}}
           {{- include "georchestra.rabbitmq-georchestra-envs" . | nindent 10 }}
           {{- end }}
+          {{- if $webapp.analytics.enabled }}
+          - name: OTEL_JAVAAGENT_ENABLED
+            value: "true"
+          - name: OTEL_EXPORTER_OTLP_PROTOCOL
+            value: "grpc"
+          - name: OTEL_EXPORTER_OTLP_ENDPOINT
+            value: {{ $webapp.analytics.otlp_endpoint | quote }}
+          - name: OTEL_INSTRUMENTATION_LOGBACK_APPENDER_EXPERIMENTAL_CAPTURE_MDC_ATTRIBUTES
+            value: "*"
+          - name: OTEL_TRACES_EXPORTER
+            value: "none"
+          - name: OTEL_METRICS_EXPORTER
+            value: "none"
+          - name: OTEL_LOGS_EXPORTER
+            value: "otlp"
+          {{- end }}
           {{- if $webapp.extra_environment }}
           {{- $webapp.extra_environment | toYaml | nindent 10 }}
           {{- end }}

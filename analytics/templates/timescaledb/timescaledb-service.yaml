@@ -1,0 +1,19 @@
+{{- $webapp := .Values.timescaledb -}}
+{{- if $webapp.builtin -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "analytics.fullname" . }}-timescaledb-svc
+  labels:
+    {{- include "analytics.labels" . | nindent 4 }}
+    app.kubernetes.io/component: {{ include "analytics.fullname" . }}-timescaledb
+spec:
+  ports:
+    - name: postgresql
+      port: 5432
+      targetPort: postgresql
+      protocol: TCP
+  selector:
+    app.kubernetes.io/component: {{ include "analytics.fullname" . }}-timescaledb
+
+{{- end }}

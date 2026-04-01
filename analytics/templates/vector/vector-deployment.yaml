@@ -1,0 +1,107 @@
+{{- $webapp := .Values.vector -}}
+{{- if $webapp.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "analytics.fullname" . }}-vector
+  labels:
+    {{- include "analytics.labels" . | nindent 4 }}
+    app.kubernetes.io/component: {{ include "analytics.fullname" . }}-vector
+spec:
+  replicas: {{ $webapp.replicaCount | default 1 }}
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      {{- include "analytics.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: {{ include "analytics.fullname" . }}-vector
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/vector/vector-configmap.yaml") . | sha256sum }}
+        {{- with $webapp.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "analytics.selectorLabels" . | nindent 8 }}
+        org.georchestra.service/name: {{ include "analytics.fullname" . }}-vector
+        app.kubernetes.io/component: {{ include "analytics.fullname" . }}-vector
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml $webapp.podSecurityContext | nindent 8 }}
+      {{- with $webapp.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $webapp.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $webapp.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: analytics-vector
+          image: "{{ $webapp.image.repository }}:{{ $webapp.image.tag }}"
+          imagePullPolicy: {{ $webapp.image.pullPolicy }}
+          securityContext:
+            {{- toYaml $webapp.securityContext | nindent 12 }}
+          {{- with $webapp.lifecycle }}
+          lifecycle:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: grpc
+              containerPort: 4317
+              protocol: TCP
+            - name: http
+              containerPort: 4318
+              protocol: TCP
+            - name: api
+              containerPort: 8686
+              protocol: TCP
+          envFrom:
+            - secretRef:
+                name: {{ include "analytics.timescaledb-env-secret-name" . | quote }}
+          env:
+            - name: VECTOR_CONFIG
+              value: "/etc/vector/*.yaml"
+            {{- include "analytics.timescaledb-envs" . | nindent 12 }}
+            {{- with $webapp.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          volumeMounts:
+            - mountPath: /etc/vector
+              name: vector-config
+              readOnly: true
+            {{- with $webapp.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: api
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: api
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          resources:
+            {{- toYaml $webapp.resources | nindent 12 }}
+      volumes:
+      - name: vector-config
+        configMap:
+          name: {{ include "analytics.fullname" . }}-vector-config
+      {{- with $webapp.extraVolumes }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
+
+{{- end }}
