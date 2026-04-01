@@ -65,9 +65,14 @@ timescaledb:
       cpu: "1"
       memory: 2Gi
   # podSecurityContext is the pod-level security context.
-  podSecurityContext: {}
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 70
+    runAsGroup: 70
+    fsGroup: 70
   # securityContext is the container-level security context.
-  securityContext: {}
+  securityContext:
+    runAsUser: 70
   # nodeSelector is the node selector for pod scheduling.
   nodeSelector: {}
   # tolerations is the tolerations for pod scheduling.
@@ -106,9 +111,14 @@ vector:
       cpu: 500m
       memory: 512Mi
   # podSecurityContext is the pod-level security context.
-  podSecurityContext: {}
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 65534
+    runAsGroup: 65534
+    fsGroup: 65534
   # securityContext is the container-level security context.
-  securityContext: {}
+  securityContext:
+    runAsUser: 65534
   # nodeSelector is the node selector for pod scheduling.
   nodeSelector: {}
   # tolerations is the tolerations for pod scheduling.
@@ -178,9 +188,14 @@ cli:
       cpu: 500m
       memory: 512Mi
   # podSecurityContext is the pod-level security context.
-  podSecurityContext: {}
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10000
+    runAsGroup: 10001
+    fsGroup: 10001
   # securityContext is the container-level security context.
-  securityContext: {}
+  securityContext:
+    runAsUser: 10000
   # nodeSelector is the node selector for pod scheduling.
   nodeSelector: {}
   # tolerations is the tolerations for pod scheduling.
