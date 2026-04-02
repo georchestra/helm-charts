@@ -16,9 +16,9 @@ timescaledb:
   timezone: "Europe/Paris"
   image:
     # repository is the TimescaleDB container image repository.
-    repository: timescale/timescaledb
+    repository: timescale/timescaledb-ha
     # tag is the TimescaleDB container image tag.
-    tag: 2.26.1-pg17
+    tag: pg18.3-ts2.26.1-oss
     # pullPolicy is the image pull policy.
     pullPolicy: IfNotPresent
   auth:
