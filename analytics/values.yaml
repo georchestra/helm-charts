@@ -159,7 +159,7 @@ cli:
   # enabled is whether to deploy the CLI CronJob.
   enabled: true
   # schedule is the cron schedule for the CLI CronJob.
-  schedule: "0 01 * * *"
+  schedule: "0 * * * *"
   image:
     # repository is the CLI container image repository.
     repository: georchestra/analytics-cli
