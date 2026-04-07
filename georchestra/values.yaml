@@ -220,6 +220,10 @@ georchestra:
       # container extra volume. It should match an item from the extra_volumes.name
       # variable above.
       extra_volumeMounts: []
+      environment:
+        # Filesystem sandbox restricts access to one particular directory
+        # See: https://docs.geoserver.org/main/en/user/security/sandbox.html
+        GEOSERVER_FILESYSTEM_SANDBOX: "/mnt/geoserver_geodata"
       tolerations: []
       # registry_secret: default
       service:
