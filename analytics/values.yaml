@@ -18,7 +18,7 @@ timescaledb:
     # repository is the TimescaleDB container image repository.
     repository: timescale/timescaledb
     # tag is the TimescaleDB container image tag.
-    tag: 2.26.1-pg18-oss
+    tag: 2.26.1-pg18
     # pullPolicy is the image pull policy.
     pullPolicy: IfNotPresent
   auth:
