@@ -186,8 +186,8 @@ syncDashboards:
       cpu: 100m
       memory: 128Mi
     limits:
-      cpu: 500m
-      memory: 256Mi
+      cpu: 1000m
+      memory: 1512Mi
   # podSecurityContext is the pod-level security context.
   podSecurityContext:
     runAsNonRoot: true
