@@ -1,0 +1,82 @@
+{{- $webapp := .Values.syncDashboards -}}
+{{- if $webapp.enabled -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "analytics.fullname" . }}-sync-dashboards
+  labels:
+    {{- include "analytics.labels" . | nindent 4 }}
+    app.kubernetes.io/component: {{ include "analytics.fullname" . }}-sync-dashboards
+  {{- if $webapp.useHelmHooks }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "2"
+    "helm.sh/hook-delete-policy": before-hook-creation
+  {{- else }}
+  annotations:
+    {{- with $webapp.jobAnnotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- end }}
+spec:
+  backoffLimit: {{ $webapp.backoffLimit | default 1 }}
+  ttlSecondsAfterFinished: {{ $webapp.ttlSecondsAfterFinished | default 300 }}
+  template:
+    metadata:
+      labels:
+        {{- include "analytics.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: {{ include "analytics.fullname" . }}-sync-dashboards
+      {{- with $webapp.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml $webapp.podSecurityContext | nindent 8 }}
+      {{- with $webapp.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $webapp.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $webapp.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+      - name: sync-dashboards
+        image: "{{ $webapp.image.repository }}:{{ $webapp.image.tag }}"
+        imagePullPolicy: {{ $webapp.image.pullPolicy }}
+        securityContext:
+          {{- toYaml $webapp.securityContext | nindent 10 }}
+        {{- with $webapp.args }}
+        args:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        env:
+        - name: SUPERSET_URL
+          value: {{ $webapp.supersetUrl | quote }}
+        - name: ANALYTICS_DB_URI
+          value: "postgresql://$(TSDB_USER):$(TSDB_PASSWORD)@$(TSDB_HOST):$(TSDB_PORT)/$(TSDB_NAME)"
+        {{- include "analytics.timescaledb-envs" . | nindent 8 }}
+        {{- with $webapp.extraEnv }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        resources:
+          {{- toYaml $webapp.resources | nindent 10 }}
+        {{- with $webapp.extraVolumeMounts }}
+        volumeMounts:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+      restartPolicy: Never
+      {{- with $webapp.extraVolumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}
