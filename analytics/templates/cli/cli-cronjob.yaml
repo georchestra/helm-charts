@@ -1,0 +1,91 @@
+{{- $webapp := .Values.cli -}}
+{{- if $webapp.enabled -}}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "analytics.fullname" . }}-cli-cronjob
+  labels:
+    {{- include "analytics.labels" . | nindent 4 }}
+    app.kubernetes.io/component: {{ include "analytics.fullname" . }}-cli
+spec:
+  concurrencyPolicy: Forbid
+  schedule: {{ $webapp.schedule | quote }}
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        metadata:
+          annotations:
+            checksum/config: {{ include (print $.Template.BasePath "/cli/cli-configmap.yaml") . | sha256sum }}
+            {{- with $webapp.podAnnotations }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          labels:
+            {{- include "analytics.selectorLabels" . | nindent 12 }}
+            app.kubernetes.io/component: {{ include "analytics.fullname" . }}-cli
+        spec:
+          {{- with .Values.imagePullSecrets }}
+          imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          securityContext:
+            {{- toYaml $webapp.podSecurityContext | nindent 12 }}
+          {{- with $webapp.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with $webapp.affinity }}
+          affinity:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with $webapp.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          containers:
+          - name: analytics-cli
+            image: "{{ $webapp.image.repository }}:{{ $webapp.image.tag }}"
+            imagePullPolicy: {{ $webapp.image.pullPolicy }}
+            securityContext:
+              {{- toYaml $webapp.securityContext | nindent 14 }}
+            command: ["analytics-cli"]
+            args:
+            {{- if $webapp.fakeRecords.enabled }}
+              - "fake2db"
+              - "--last_n_hours"
+              - {{ $webapp.fakeRecords.coverDurationHours | quote }}
+              - "--rate"
+              - {{ $webapp.fakeRecords.maxRate | quote }}
+            {{- else }}
+              - "buffer2db"
+            {{- end }}
+            envFrom:
+              - secretRef:
+                  name: {{ include "analytics.timescaledb-env-secret-name" . | quote }}
+            env:
+              {{- include "analytics.timescaledb-envs" . | nindent 14 }}
+              - name: GEORCHESTRA_ANALYTICS_CLI_CONFIG_FILE
+                value: /etc/georchestra/analytics/cli.yaml
+              {{- with $webapp.extraEnv }}
+              {{- toYaml . | nindent 14 }}
+              {{- end }}
+            resources:
+              {{- toYaml $webapp.resources | nindent 14 }}
+            volumeMounts:
+            - name: cli-config
+              subPath: cli.yaml
+              mountPath: /etc/georchestra/analytics/cli.yaml
+            {{- with $webapp.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          restartPolicy: Never
+          volumes:
+          - name: cli-config
+            configMap:
+              name: {{ include "analytics.fullname" . }}-cli-config
+          {{- with $webapp.extraVolumes }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+{{- end }}

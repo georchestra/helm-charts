@@ -1,0 +1,40 @@
+{{- $webapp := .Values.vector -}}
+{{- if $webapp.enabled -}}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "analytics.fullname" . }}-vector-config
+  labels:
+    {{- include "analytics.labels" . | nindent 4 }}
+    app.kubernetes.io/component: {{ include "analytics.fullname" . }}-vector
+data:
+  default.yaml: |
+    api:
+      enabled: true
+      address: "[::]:8686"
+
+    sources:
+      opentelemetry:
+        type: opentelemetry
+        grpc:
+          address: "[::]:4317"
+        http:
+          address: "[::]:4318"
+          headers: []
+          keepalive:
+            max_connection_age_jitter_factor: 0.1
+            max_connection_age_secs: 300
+
+    sinks:
+      tsdb:
+        type: postgres
+        # Listen to a "hook" transform that will be defined in the custom file
+        inputs: 
+          - tsdb_input
+        endpoint: "postgres://${TSDB_USER}:${TSDB_PASSWORD}@${TSDB_HOST}:${TSDB_PORT}/${TSDB_NAME}"
+        table: "${TSDB_OTEL_TABLE:-analytics.opentelemetry_buffer}"
+        pool_size: 5
+  custom.yaml: |
+    {{- toYaml $webapp.config | nindent 4 }}
+{{- end }}

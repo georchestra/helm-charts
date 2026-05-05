@@ -1,0 +1,323 @@
+# Default values for analytics.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# imagePullSecrets is the list of image pull secrets for private registries.
+imagePullSecrets: []
+# nameOverride is the override for the chart name.
+nameOverride: ""
+# fullnameOverride is the override for the fully qualified app name.
+fullnameOverride: ""
+
+timescaledb:
+  # builtin is whether to deploy the built-in TimescaleDB instance.
+  builtin: true
+  # timezone is the timezone for the TimescaleDB instance.
+  timezone: "Europe/Paris"
+  image:
+    # repository is the TimescaleDB container image repository.
+    repository: timescale/timescaledb
+    # tag is the TimescaleDB container image tag.
+    tag: 2.26.1-pg18
+    # pullPolicy is the image pull policy.
+    pullPolicy: IfNotPresent
+  auth:
+    # existingSecret is the name of an existing secret containing database credentials.
+    # If set, it will replace the auth settings below.
+    # existingSecret: my-existing-secret
+    # database is the name of the database to create.
+    database: analytics
+    # username is the database username.
+    username: tsdb
+    # password is the database password.
+    password: secret
+    # port is the database port.
+    port: "5432"
+    # existingEnvSecret is the name of an existing secret containing TSDB_OTEL_TABLE and any other
+    # non-connection environment variables. If set, the auto-generated timescaledb-env-secret
+    # will not be created.
+    # existingEnvSecret: my-timescaledb-env-secret
+  # dbOpentelemetryTable is the name of the OpenTelemetry buffer table.
+  dbOpentelemetryTable: "analytics.opentelemetry_buffer"
+  persistence:
+    # annotations is the annotations for the PVC.
+    annotations:
+      helm.sh/resource-policy: keep
+    # size is the size of the persistent volume.
+    size: 100Gi
+    # accessModes is the access modes for the persistent volume.
+    accessModes:
+      - ReadWriteOnce
+    ## storageClass is the storage class for the persistent volume.
+    ## If defined, storageClassName: <storageClass>
+    ## If set to "-", storageClassName: "", which disables dynamic provisioning
+    ## If undefined (the default) or set to null, no storageClassName spec is
+    ##   set, choosing the default provisioner.
+    # storageClass: ""
+    ## existingPV is the name of an existing PersistentVolume to bind to.
+    # existingPV: timescaledb-data
+  # resources is the resource requests and limits for the TimescaleDB container.
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: "1"
+      memory: 2Gi
+  # podSecurityContext is the pod-level security context.
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 70
+    runAsGroup: 70
+    fsGroup: 70
+  # securityContext is the container-level security context.
+  securityContext:
+    runAsUser: 70
+  # nodeSelector is the node selector for pod scheduling.
+  nodeSelector: {}
+  # tolerations is the tolerations for pod scheduling.
+  tolerations: []
+  # affinity is the affinity rules for pod scheduling.
+  affinity: {}
+  # podAnnotations is the annotations to add to the pod.
+  podAnnotations: {}
+  # lifecycle is the lifecycle hooks for the container.
+  lifecycle: {}
+  # extraEnv is additional environment variables for the container.
+  extraEnv: []
+  # extraVolumes is additional volumes for the pod.
+  extraVolumes: []
+  # extraVolumeMounts is additional volume mounts for the container.
+  extraVolumeMounts: []
+
+vector:
+  # enabled is whether to deploy the Vector instance.
+  enabled: true
+  # replicaCount is the number of Vector replicas.
+  replicaCount: 1
+  image:
+    # repository is the Vector container image repository.
+    repository: timberio/vector
+    # tag is the Vector container image tag.
+    tag: 0.50.0-alpine
+    # pullPolicy is the image pull policy.
+    pullPolicy: IfNotPresent
+  # resources is the resource requests and limits for the Vector container.
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  # podSecurityContext is the pod-level security context.
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 65534
+    runAsGroup: 65534
+    fsGroup: 65534
+  # securityContext is the container-level security context.
+  securityContext:
+    runAsUser: 65534
+  # nodeSelector is the node selector for pod scheduling.
+  nodeSelector: {}
+  # tolerations is the tolerations for pod scheduling.
+  tolerations: []
+  # affinity is the affinity rules for pod scheduling.
+  affinity: {}
+  # podAnnotations is the annotations to add to the pod.
+  podAnnotations: {}
+  # lifecycle is the lifecycle hooks for the container.
+  lifecycle: {}
+  # extraEnv is additional environment variables for the container.
+  extraEnv: []
+  # extraVolumes is additional volumes for the pod.
+  extraVolumes: []
+  # extraVolumeMounts is additional volume mounts for the container.
+  extraVolumeMounts: []
+
+  # config is the Vector custom configuration (merged with the hardcoded default).
+  config:
+    # transforms is the Vector transforms configuration.
+    # Must include a "tsdb_input" transform as the bridge to the default tsdb sink.
+    transforms:
+      gw_access_logs_filter:
+        type: filter
+        inputs:
+          - opentelemetry.logs
+        condition:
+          type: "vrl"
+          source: '.scope.name == "org.georchestra.gateway.accesslog"'
+      tsdb_input:
+        type: remap
+        inputs:
+          - gw_access_logs_filter
+        source: "."
+
+# syncDashboards is the Job that syncs Superset dashboards on install/upgrade.
+syncDashboards:
+  # enabled is whether to run the sync-dashboards job.
+  enabled: true
+  # useHelmHooks controls whether the job uses Helm hooks (post-install/post-upgrade).
+  # Set to false when using ArgoCD, Flux, Rancher or Terraform.
+  useHelmHooks: true
+  # jobAnnotations is additional annotations for the job (used when useHelmHooks is false).
+  # For ArgoCD, uncomment the following to run the job on every sync:
+  #   argocd.argoproj.io/hook: Sync
+  jobAnnotations: {}
+  # backoffLimit is the number of retries before marking the job as failed.
+  backoffLimit: 1
+  # ttlSecondsAfterFinished is the TTL for the job after completion.
+  ttlSecondsAfterFinished: 300
+  image:
+    # repository is the sync-dashboards container image repository.
+    repository: georchestra/analytics-syncdashboards
+    # tag is the sync-dashboards container image tag.
+    tag: sha-05df948
+    # pullPolicy is the image pull policy.
+    pullPolicy: IfNotPresent
+  # supersetUrl is the URL of the Superset instance.
+  supersetUrl: "http://superset:8888"
+  # args is the additional arguments to pass to the sync_dashboards.py script.
+  args: []
+  # resources is the resource requests and limits for the container.
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 1000m
+      memory: 1512Mi
+  # podSecurityContext is the pod-level security context.
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10000
+    runAsGroup: 10001
+    fsGroup: 10001
+  # securityContext is the container-level security context.
+  securityContext:
+    runAsUser: 10000
+  # nodeSelector is the node selector for pod scheduling.
+  nodeSelector: {}
+  # tolerations is the tolerations for pod scheduling.
+  tolerations: []
+  # affinity is the affinity rules for pod scheduling.
+  affinity: {}
+  # podAnnotations is the annotations to add to the pod.
+  podAnnotations: {}
+  # extraEnv is additional environment variables for the container.
+  # Example for classic auth instead of geOrchestra sec-headers:
+  #   - name: SUPERSET_USERNAME
+  #     value: admin
+  #   - name: SUPERSET_PASSWORD
+  #     valueFrom:
+  #       secretKeyRef:
+  #         name: superset-secret
+  #         key: password
+  extraEnv: []
+  # extraVolumes is additional volumes for the pod.
+  extraVolumes: []
+  # extraVolumeMounts is additional volume mounts for the container.
+  extraVolumeMounts: []
+
+# cli is the Python CLI CronJob configuration.
+cli:
+  # enabled is whether to deploy the CLI CronJob.
+  enabled: true
+  # schedule is the cron schedule for the CLI CronJob.
+  schedule: "0 * * * *"
+  image:
+    # repository is the CLI container image repository.
+    repository: georchestra/analytics-cli
+    # tag is the CLI container image tag.
+    tag: 2.0.0
+    # pullPolicy is the image pull policy.
+    pullPolicy: IfNotPresent
+  fakeRecords:
+    # enabled is whether to generate fake log records instead of processing real ones.
+    # Useful for dashboard development.
+    # Beware that when this is active, it will not process the real records, only generate fake ones.
+    enabled: false
+    # coverDurationHours defines how many hours before now will be covered.
+    # You will want to make it match with the schedule.
+    # For instance, with coverDurationHours: 1 and schedule: "01 * * * *", it will generate every hour
+    # records for the last hour (ensuring you don't have any gaps in your data).
+    coverDurationHours: 1
+    # maxRate is the max number of records per hour.
+    maxRate: 50
+  # resources is the resource requests and limits for the CLI container.
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  # podSecurityContext is the pod-level security context.
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10000
+    runAsGroup: 10001
+    fsGroup: 10001
+  # securityContext is the container-level security context.
+  securityContext:
+    runAsUser: 10000
+  # nodeSelector is the node selector for pod scheduling.
+  nodeSelector: {}
+  # tolerations is the tolerations for pod scheduling.
+  tolerations: []
+  # affinity is the affinity rules for pod scheduling.
+  affinity: {}
+  # podAnnotations is the annotations to add to the pod.
+  podAnnotations: {}
+  # extraEnv is additional environment variables for the container.
+  extraEnv: []
+  # extraVolumes is additional volumes for the pod.
+  extraVolumes: []
+  # extraVolumeMounts is additional volume mounts for the container.
+  extraVolumeMounts: []
+  # config is the CLI application configuration.
+  config:
+    # performance is the batch processing configuration.
+    performance:
+      # batchSize is the number of records per batch.
+      batchSize: 10000
+    # appsMapping is the custom application name mappings.
+    appsMapping: {}
+    # timezone is the local timezone for time-related handling.
+    timezone: "Europe/Paris"
+    # parsers is the log parser configuration (kept as a literal block to preserve regex strings).
+    parsers: |-
+      opentelemetry:
+        text_message_parser:
+          enable: false
+          regex: r"^(?P<ip>[0-9a-fA-F:\.]+) (?P<user_identifier>[-_\w]+) (?P<user>[-_\|, \w]+) \[(?P<timestamp>.*)\] \"(?P<method>GET|POST|HEAD|OPTION|PUT|PATCH|DELETE|TRACE|CONNECT) (https?:\/\/[_:a-zA-Z0-9\.-]+)?(?P<path>\/(?P<app>[_a-zA-Z0-9-]+)(\/.*)) HTTP\/[\.0-9]{3}\" (?P<status_code>[0-9]{3}) (?P<response_size>[-0-9]*)"
+      text_message:
+        regex: '^(?P<ip>[0-9a-fA-F:\.]+) (?P<user_identifier>[-_\w]+) (?P<user>[-_\|, \w]+) \[(?P<timestamp>.*)\] \"(?P<method>GET|POST|HEAD|OPTION|PUT|PATCH|DELETE|TRACE|CONNECT) (https?:\/\/[_:a-zA-Z0-9\.-]+)?(?P<path>\/(?P<app>[_a-zA-Z0-9-]+)(\/.*)) HTTP\/[\.0-9]{3}\" (?P<status_code>[0-9]{3}) (?P<response_size>[-0-9]*) \"-\" \"(?P<user_agent>[-0-9a-zA-Z\/\.: ();_]*)\" (?P<misc>.*) (?P<response_time>[0-9]+)ms$'
+    # metrics is the Prometheus metrics export configuration.
+    metrics:
+      # enabled is whether to enable metrics collection.
+      enabled: true
+      # metrics_file_path is the file path to write Prometheus metrics to.
+      # metrics_file_path: /tmp/analytics.prom
+      # pushgateway_url is the Prometheus Pushgateway URL to push metrics to.
+      # pushgateway_url: localhost:9091
+    # logging is the Python logging configuration.
+    logging:
+      version: 1
+      root:
+        handlers: [console]
+        level: DEBUG
+      handlers:
+        console:
+          class: logging.StreamHandler
+          formatter: default
+      formatters:
+        default:
+          format: '%(asctime)s %(levelname)-8s %(name)-15s %(message)s'
+          datefmt: '%Y-%m-%d %H:%M:%S'
+      loggers:
+        georchestra_analytics_cli:
+          level: DEBUG
+        __main__:
+          level: DEBUG

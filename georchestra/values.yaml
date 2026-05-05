@@ -350,6 +350,9 @@ georchestra:
       environment:
         JAVA_TOOL_OPTIONS: "-Dgeorchestra.datadir=/etc/georchestra"
       extra_environment: []
+      analytics:
+        enabled: false
+        otlp_endpoint: "http://analytics-vector-svc:4317"
       service:
         annotations: {}
       tolerations: []

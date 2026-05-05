@@ -1,0 +1,119 @@
+{{- $webapp := .Values.timescaledb -}}
+{{- if $webapp.builtin -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "analytics.fullname" . }}-timescaledb
+  labels:
+    {{- include "analytics.labels" . | nindent 4 }}
+    app.kubernetes.io/component: {{ include "analytics.fullname" . }}-timescaledb
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "analytics.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: {{ include "analytics.fullname" . }}-timescaledb
+  template:
+    metadata:
+      annotations:
+        checksum/initscripts: {{ include (print $.Template.BasePath "/timescaledb/timescaledb-initscripts-configmap.yaml") . | sha256sum }}
+        {{- with $webapp.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "analytics.selectorLabels" . | nindent 8 }}
+        org.georchestra.service/name: {{ include "analytics.fullname" . }}-timescaledb
+        app.kubernetes.io/component: {{ include "analytics.fullname" . }}-timescaledb
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml $webapp.podSecurityContext | nindent 8 }}
+      {{- with $webapp.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $webapp.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $webapp.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: analytics-timescaledb
+          image: "{{ $webapp.image.repository }}:{{ $webapp.image.tag }}"
+          imagePullPolicy: {{ $webapp.image.pullPolicy }}
+          securityContext:
+            {{- toYaml $webapp.securityContext | nindent 12 }}
+          {{- with $webapp.lifecycle }}
+          lifecycle:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: postgresql
+              containerPort: 5432
+              protocol: TCP
+          env:
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "analytics.timescaledb-connection-secret-name" . | quote }}
+                  key: dbname
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "analytics.timescaledb-connection-secret-name" . | quote }}
+                  key: user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "analytics.timescaledb-connection-secret-name" . | quote }}
+                  key: password
+            {{- with $webapp.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          volumeMounts:
+            - mountPath: /home/postgres/pgdata
+              name: timescaledb-data
+            - mountPath: /docker-entrypoint-initdb.d/100_analytics_init.sql
+              name: timescaledb-initscripts
+              subPath: 100_analytics_init.sql
+            - mountPath: /docker-entrypoint-initdb.d/101_analytics_ogc_views.sql
+              name: timescaledb-initscripts
+              subPath: 101_analytics_ogc_views.sql
+            {{- with $webapp.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          startupProbe:
+            exec:
+              command: ["bash", "-c", "psql -w -U $POSTGRES_USER -d $POSTGRES_DB -c 'SELECT 1'"]
+            failureThreshold: 30
+            periodSeconds: 10
+          livenessProbe:
+            exec:
+              command: ["bash", "-c", "psql -w -U $POSTGRES_USER -d $POSTGRES_DB -c 'SELECT 1'"]
+            periodSeconds: 10
+          readinessProbe:
+            exec:
+              command: ["bash", "-c", "psql -w -U $POSTGRES_USER -d $POSTGRES_DB -c 'SELECT 1'"]
+            periodSeconds: 10
+          resources:
+            {{- toYaml $webapp.resources | nindent 12 }}
+      volumes:
+      - name: timescaledb-data
+        persistentVolumeClaim:
+          claimName: {{ include "analytics.fullname" . }}-timescaledb-data
+      - name: timescaledb-initscripts
+        configMap:
+          name: {{ include "analytics.fullname" . }}-timescaledb-initscripts
+      {{- with $webapp.extraVolumes }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
+
+{{- end }}

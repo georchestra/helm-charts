@@ -1,0 +1,34 @@
+{{- $webapp := .Values.timescaledb -}}
+{{- if $webapp.builtin -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "analytics.fullname" . }}-timescaledb-data
+  {{- with $webapp.persistence.annotations }}
+  annotations:
+    {{- range $key, $value := . }}
+    {{ $key }}: {{ $value }}
+    {{- end }}
+  {{- end }}
+  labels:
+    {{- include "analytics.labels" . | nindent 4 }}
+    app.kubernetes.io/component: {{ include "analytics.fullname" . }}-timescaledb
+spec:
+  accessModes:
+    {{- range $webapp.persistence.accessModes }}
+    - {{ . | quote }}
+    {{- end }}
+  resources:
+    requests:
+      storage: {{ $webapp.persistence.size }}
+  {{- if $webapp.persistence.storageClass }}
+  {{- if eq "-" $webapp.persistence.storageClass }}
+  storageClassName: ""
+  {{- else }}
+  storageClassName: {{ $webapp.persistence.storageClass }}
+  {{- end }}
+  {{- end }}
+  {{- if $webapp.persistence.existingPV }}
+  volumeName: {{ $webapp.persistence.existingPV }}
+  {{- end }}
+{{- end }}

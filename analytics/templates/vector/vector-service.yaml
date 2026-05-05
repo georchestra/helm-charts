@@ -1,0 +1,27 @@
+{{- $webapp := .Values.vector -}}
+{{- if $webapp.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "analytics.fullname" . }}-vector-svc
+  labels:
+    {{- include "analytics.labels" . | nindent 4 }}
+    app.kubernetes.io/component: {{ include "analytics.fullname" . }}-vector
+spec:
+  ports:
+    - name: grpc
+      port: 4317
+      targetPort: grpc
+      protocol: TCP
+    - name: http
+      port: 4318
+      targetPort: http
+      protocol: TCP
+    - name: api
+      port: 8686
+      targetPort: api
+      protocol: TCP
+  selector:
+    app.kubernetes.io/component: {{ include "analytics.fullname" . }}-vector
+
+{{- end }}
