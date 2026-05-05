@@ -3,6 +3,16 @@ entries:
   analytics:
   - apiVersion: v2
     appVersion: 1.0.0rc1
+    created: "2026-05-05T14:06:49.104614495Z"
+    description: A Helm chart geOrchestra Analytics module
+    digest: 1a66a6f37ce3cd34a0a003d18a50d2dcb41e424de0269e89a01e69adc0801227
+    name: analytics
+    type: application
+    urls:
+    - https://github.com/georchestra/helm-charts/releases/download/analytics-1.0.1/analytics-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
+    appVersion: 1.0.0rc1
     created: "2026-05-05T13:16:56.014153994Z"
     description: A Helm chart geOrchestra Analytics module
     digest: cd3f5591b65d3c5632d573ac7266be83271a45862d34707b586dc68c37ab5cde
@@ -4491,4 +4501,4 @@ entries:
     urls:
     - https://github.com/georchestra/helm-charts/releases/download/maelstro-0.2.0/maelstro-0.2.0.tgz
     version: 0.2.0
-generated: "2026-05-05T13:16:56.209821109Z"
+generated: "2026-05-05T14:06:49.105182232Z"
