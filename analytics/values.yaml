@@ -177,7 +177,7 @@ syncDashboards:
     # pullPolicy is the image pull policy.
     pullPolicy: IfNotPresent
   # supersetUrl is the URL of the Superset instance.
-  supersetUrl: "http://superset:8088"
+  supersetUrl: "http://superset:8088/superset"
   # args is the additional arguments to pass to the sync_dashboards.py script.
   args: []
   # resources is the resource requests and limits for the container.
