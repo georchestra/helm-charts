@@ -173,7 +173,7 @@ syncDashboards:
     # repository is the sync-dashboards container image repository.
     repository: georchestra/analytics-syncdashboards
     # tag is the sync-dashboards container image tag.
-    tag: sha-05df948
+    tag: sha-9a43247
     # pullPolicy is the image pull policy.
     pullPolicy: IfNotPresent
   # supersetUrl is the URL of the Superset instance.
