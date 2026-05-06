@@ -52,7 +52,7 @@ spec:
           - name: OTEL_EXPORTER_OTLP_PROTOCOL
             value: "grpc"
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
-            value: {{ $webapp.analytics.otlp_endpoint | quote }}
+            value: {{ $webapp.analytics.otlpEndpoint | quote }}
           - name: OTEL_INSTRUMENTATION_LOGBACK_APPENDER_EXPERIMENTAL_CAPTURE_MDC_ATTRIBUTES
             value: "*"
           - name: OTEL_TRACES_EXPORTER

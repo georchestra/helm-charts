@@ -1,3 +1,6 @@
+# 1.16.0
+- Add support for OTEL_* for JavaAgent with new geOrchestra analytics for sending to Vector (#219)
+
 # 1.15.0
 - Add support for existing PVCs via existingClaim (#204)
 - Fix issue with podAnnotations (#208)

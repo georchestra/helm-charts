@@ -352,7 +352,7 @@ georchestra:
       extra_environment: []
       analytics:
         enabled: false
-        otlp_endpoint: "http://analytics-vector-svc:4317"
+        otlpEndpoint: "http://analytics-vector-svc:4317"
       service:
         annotations: {}
       tolerations: []
