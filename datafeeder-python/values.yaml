@@ -61,6 +61,7 @@ backend:
       ref: docker-master
       ssh_secret: ""
   config:
+    dataPublicUrl: https://georchestra-127-0-1-1.traefik.me/geoserver
     secretKey: change-me
     encryptionKey: change-me
     frontend:
