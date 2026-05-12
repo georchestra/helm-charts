@@ -1,0 +1,6 @@
+dependencies:
+- name: airflow
+  repository: oci://ghcr.io/camptocamp/charts-gs
+  version: 1.19.0-dev
+digest: sha256:d29e99fcbf0240b76b341c8057ce3b4cef6479266863ec4988df555f013e5b2a
+generated: "2026-01-15T11:32:45.611323702+01:00"

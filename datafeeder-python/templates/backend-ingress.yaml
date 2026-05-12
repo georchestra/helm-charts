@@ -1,0 +1,42 @@
+{{- $webapp := .Values.backend -}}
+{{- if .Values.backend.ingress.enabled -}}
+{{- $fullName := include "datafeeder-python.fullname" . -}}
+{{- $ingress := $webapp.ingress -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullName }}-backend
+  labels:
+    {{- include "datafeeder-python.labels" . | nindent 4 }}
+  {{- with $ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with $ingress.className }}
+  ingressClassName: {{ . }}
+  {{- end }}
+  {{- if $ingress.tls }}
+  tls:
+    {{- range $ingress.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}
+  rules:
+    {{- range $ingress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          - path: /datafeeder/api
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullName }}-backend-svc
+                port:
+                  name: http
+    {{- end }}
+{{- end }}

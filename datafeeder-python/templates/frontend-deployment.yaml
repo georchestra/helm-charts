@@ -1,0 +1,93 @@
+{{- $webapp := .Values.frontend -}}
+{{- if $webapp.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "datafeeder-python.fullname" . }}-frontend
+  labels:
+    {{- include "datafeeder-python.labels" . | nindent 4 }}
+spec:
+  replicas: {{ $webapp.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "datafeeder-python.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: {{ include "datafeeder-python.fullname" . }}-frontend
+  template:
+    metadata:
+      {{- with $webapp.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "datafeeder-python.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: {{ include "datafeeder-python.fullname" . }}-frontend
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml $webapp.podSecurityContext | nindent 8 }}
+      {{- with $webapp.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . |nindent 8 }}
+      {{- end }}
+      {{- with $webapp.affinity }}
+      affinity:
+        {{- toYaml . |nindent 8 }}
+      {{- end }}
+      {{- with $webapp.tolerations }}
+      tolerations:
+        {{- toYaml . |nindent 8 }}
+      {{- end }}
+      initContainers:
+      {{ include "georchestra.bootstrap_georchestra_datadir" . | nindent 6 }}
+      containers:
+      - name: frontend
+        image: "{{ $webapp.image.repository }}:{{ $webapp.image.tag }}"
+        imagePullPolicy: {{ $webapp.image.imagePullPolicy }}
+        env:
+        - name: ENABLE_GEORCHESTRA_HEADER
+          value: 'true'
+        {{- with $webapp.extraEnv }}
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        resources:
+          {{- toYaml $webapp.resources | nindent 10 }}
+        securityContext:
+          {{- toYaml $webapp.securityContext | nindent 12 }}
+        {{- with $webapp.lifecycle }}
+        lifecycle:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /datafeeder/
+            port: http
+        readinessProbe:
+          httpGet:
+            path: /datafeeder/
+            port: http
+        volumeMounts:
+          - mountPath: /etc/georchestra
+            name: georchestra-datadir
+        {{- if $webapp.extraVolumeMounts }}
+          {{- $webapp.extraVolumeMounts | toYaml | nindent 8 }}
+        {{- end }}
+      volumes:
+      - name: georchestra-datadir
+        emptyDir: {}
+      {{- if .Values.backend.datadir.git.ssh_secret }}
+      - name: ssh-secret
+        secret:
+          secretName: {{ .Values.backend.datadir.git.ssh_secret }}
+          defaultMode: 0400
+      {{- end }}
+      {{- if $webapp.extraVolumes }}
+        {{ $webapp.extraVolumes | toYaml | nindent 6 }}
+      {{- end }}
+{{- end }}

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "datafeeder-python.fullname" . }}-svc
+  labels:
+    {{- include "datafeeder-python.labels" . | nindent 4 }}
+spec:
+  ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: http
+  selector:
+    {{- include "datafeeder-python.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: {{ include "datafeeder-python.fullname" . }}-frontend

@@ -1,0 +1,310 @@
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+backend:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: ghcr.io/camptocamp/datafeeder/datafeeder-python-backend
+    pullPolicy: Always
+    tag: latest
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+    limits:
+      memory: 512Mi
+  podSecurityContext:
+    runAsUser: 10000
+    runAsGroup: 10001
+    fsGroup: 10001
+  securityContext:
+    runAsUser: 10000
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  podAnnotations: {}
+  lifecycle: {}
+  extraVolumes: []
+  extraVolumeMounts: []
+  extraEnv: {}
+  ingress:
+    enabled: false
+    className: ""
+    annotations: {}
+    hosts:
+      - host: "georchestra-127-0-1-1.traefik.me"
+    # tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+  # In production, need to use the database where geOrchestra is installed.
+  # Configure the existingSecret to geOrchestra database if using geOrchestra helm chart
+  # Or configure to the external PostgreSQL host with georchestra database
+  # You also need to configure an external database for Airflow, otherwise it uses
+  # the internal PostgreSQL database.
+  database:
+    existingSecret: ""
+    dbname: georchestra
+    host: georchestra
+    password: georchestra
+    postgresPassword: georchestra
+    port: "5432"
+    ssl: false
+    username: georchestra
+  data_db:
+    existingSecret: ""
+  datadir:
+    git:
+      url: https://github.com/georchestra/datadir.git
+      ref: docker-master
+      ssh_secret: ""
+  config:
+    secretKey: change-me
+    encryptionKey: change-me
+    frontend:
+      # Change to your domain with subpath /datafeeder
+      url: https://georchestra-127-0-1-1.traefik.me/datafeeder
+    corsOrigins: http://localhost:5173
+    console:
+      # optional, default to georchestra-console-svc (work if helm chart geOrchestra installed)
+      url: ""
+    geoserver:
+      # optional, default to georchestra-geoserver-svc (work if helm chart geOrchestra installed)
+      url: ""
+      username: geoserver_privileged_user
+      password: change-me
+    geonetwork:
+      # optional, default to georchestra-geonetwork-svc (work if helm chart geOrchestra installed)
+      url: ""
+      username: geoserver_privileged_user
+      password: change-me
+    airflow:
+      # optional, default to airflow api-server in the same helm chart
+      url: ""
+      username: admin
+      password: change-me
+
+frontend:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: ghcr.io/camptocamp/datafeeder/datafeeder-python-frontend
+    pullPolicy: Always
+    tag: latest
+  resources:
+    requests:
+      cpu: 100m
+      memory: 64Mi
+    limits:
+      memory: 128Mi
+  podSecurityContext:
+    runAsUser: 101
+    runAsGroup: 101
+    fsGroup: 101
+  securityContext:
+    runAsUser: 101
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  podAnnotations: {}
+  lifecycle: {}
+  extraVolumes: []
+  extraVolumeMounts: []
+  extraEnv: []
+  ingress:
+    enabled: false
+    className: ""
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: "georchestra-127-0-1-1.traefik.me"
+    # tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+
+tooling:
+  # Global image used for toolbox: chmod + git clone
+  general:
+    image:
+      repository: alpine/git
+      tag: 2.49.1
+
+# Airflow helm chart. Doc here: https://airflow.apache.org/docs/helm-chart/stable/index.html
+airflow:
+  enabled: true
+
+  env:
+    - name: AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION
+      value: "False"
+
+  redis:
+    # To change
+    password: ~
+    persistence:
+      enabled: false
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        memory: 256Mi
+
+  statsd:
+    enabled: false
+
+  images:
+    airflow:
+      repository: ghcr.io/camptocamp/datafeeder/datafeeder-python-airflow
+      tag: latest
+      pullPolicy: Always  # Set to Always while it's latest
+
+  data:
+    metadataConnection:
+      protocol: postgresql
+      user: georchestra
+      pass: georchestra
+
+  # To change
+  jwtSecret: ~
+  fernetKey: ~
+
+  # Configure Airflow to run behind a subpath
+  config:
+    api:
+      base_url: /airflow
+    webserver:
+      base_url: /airflow
+
+  ingress:
+    apiServer:
+      enabled: true
+      className: ""
+      path: "/airflow"
+      annotations: {}
+      hosts:
+        - name: "georchestra-127-0-1-1.traefik.me"
+      #    tls:
+      #      enabled: true
+      #      secretName: "https-georchestra"
+
+  triggerer:
+    persistence:
+      enabled: false
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        memory: 512Mi
+
+  scheduler:
+    resources:
+      requests:
+        cpu: 250m
+        memory: 512Mi
+      limits:
+        memory: 1Gi
+
+  apiServer:
+    resources:
+      requests:
+        cpu: 250m
+        memory: 512Mi
+      limits:
+        memory: 1Gi
+
+  dagProcessor:
+    resources:
+      requests:
+        cpu: 250m
+        memory: 512Mi
+      limits:
+        memory: 1Gi
+
+  workers:
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        memory: 5Gi
+    celery:
+      persistence:
+        enabled: true
+
+  logs:
+    emptyDirConfig:
+      sizeLimit: 1Gi
+      medium: Memory
+
+  postgresql:
+  # Uncomment when using external PostgreSQL, highly recommended for production
+  #  enabled: false
+    image:  # section of parameters for builtin database
+      registry: ghcr.io
+      repository: camptocamp/datafeeder/datafeeder-python-database
+      tag: latest
+    auth:
+      database: georchestra
+      # If using an existing secret: this one will both be used by the bitnami chart managing the DB
+      # and by the georchestra db secret
+      # (https://github.com/georchestra/helm-charts/blob/main/georchestra/templates/database/database-georchestra-secret.yaml)
+      # that is used by the apps
+      # So you must be quite careful. It should follow the pattern from the previsouly mentioned secret
+      # and tell the bitnami chart which variable provide the user and password
+      # And the `database`, `username` and `ssl` params still have to be defined here and match the ones
+      # provided by the secret
+      # existingSecret: mysecret
+      # secretKeys:
+      #   adminPasswordKey: postgresPassword
+      #   userPasswordKey: password # This one should stay as it is
+  #   host: georchestra
+      password: georchestra
+      postgresPassword: georchestra
+      port: "5432"
+      ssl: false
+      username: georchestra
+    primary:  # section of parameters for builtin database
+      startupProbe:
+        enabled: true
+      containerSecurityContext:
+        readOnlyRootFilesystem: false
+      persistentVolumeClaimRetentionPolicy:
+        enabled: true
+      initdb:
+        username: georchestra
+        password: georchestra
+      resources:
+        requests:
+          cpu: 200m
+          memory: 512Mi
+        limits:
+          memory: 512Mi
+
+  # When using specific external secret
+  # See https://airflow.apache.org/docs/helm-chart/stable/production-guide.html#built-in-secrets-and-environment-variables
+  # secret:
+  #   - envName: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN
+  #     secretName: db-credentials-int-airflow
+  #     secretKey: conn
+  # enableBuiltInSecretEnvVars:
+  #   AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: false
+
+  # for ArgoCD
+  # https://airflow.apache.org/docs/helm-chart/stable/index.html#installing-the-chart-with-argo-cd-flux-rancher-or-terraform
+  # createUserJob:
+  #   useHelmHooks: false
+  # migrateDatabaseJob:
+  #   useHelmHooks: false
+  #   jobAnnotations:
+  #     "argocd.argoproj.io/hook": Sync
+
+volumes:
+  storage_class_name: default
+  airflow_logs:
+    # pv_name: datafeeder-airflow-logs
+    size: 10Gi
