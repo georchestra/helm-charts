@@ -1,6 +1,6 @@
 dependencies:
 - name: airflow
-  repository: oci://ghcr.io/georchestra/helm-georchestra
-  version: 1.19.0-dev
-digest: sha256:d29e99fcbf0240b76b341c8057ce3b4cef6479266863ec4988df555f013e5b2a
-generated: "2026-01-15T11:32:45.611323702+01:00"
+  repository: https://airflow.apache.org
+  version: 1.19.0
+digest: sha256:b2f9af317a4f2282b01e35bd8097e82523f44c470764841ec3addfefbb273959
+generated: "2026-05-12T21:56:02.940250528+02:00"
