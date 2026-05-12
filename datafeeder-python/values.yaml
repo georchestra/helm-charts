@@ -180,18 +180,6 @@ airflow:
     webserver:
       base_url: /airflow
 
-  ingress:
-    apiServer:
-      enabled: true
-      className: ""
-      path: "/airflow"
-      annotations: {}
-      hosts:
-        - name: "georchestra-127-0-1-1.traefik.me"
-      #    tls:
-      #      enabled: true
-      #      secretName: "https-georchestra"
-
   triggerer:
     persistence:
       enabled: false

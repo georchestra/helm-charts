@@ -87,10 +87,8 @@ spec:
             value: "{{ $webapp.config.metadataFetchGroupsUrl | default "http://georchestra-console-svc:8080/console/internal/organizations" }}"
           - name: DATA_FETCH_GROUPS_URL
             value: "{{ $webapp.config.dataFetchGroupsUrl | default "http://georchestra-console-svc:8080/console/internal/roles" }}"
-          - name: BACKEND_URL
-            value: "{{ $webapp.config.dataFetchGroupsUrl | default (printf "http://%s-backend-svc:8000" .Release.Name) | quote }}"
           - name: DATA_PUBLIC_URL
-            value: "{{ $webapp.config.dataFetchGroupsUrl | default (printf "http://%s-backend-svc:8000" .Release.Name) | quote }}"
+            value: "{{ $webapp.config.dataPublicUrl }}"
             {{- with $webapp.extraEnv }}
               {{- toYaml . | nindent 10 }}
             {{- end }}
