@@ -85,6 +85,21 @@ entries:
   datafeeder:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2026-05-12T20:20:29.858776465Z"
+    dependencies:
+    - condition: airflow.enabled
+      name: airflow
+      repository: https://airflow.apache.org
+      version: 1.19.0
+    description: A Helm chart for deploying Datafeeder-python
+    digest: df4d6de8b5bafd02c18539b6b25f243464e4fe04bb4cf5c3cdf6dc98c3e0f9d6
+    name: datafeeder
+    type: application
+    urls:
+    - https://github.com/georchestra/helm-charts/releases/download/datafeeder-0.1.1/datafeeder-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2026-05-12T20:04:57.211197329Z"
     dependencies:
     - condition: airflow.enabled
@@ -4573,4 +4588,4 @@ entries:
     urls:
     - https://github.com/georchestra/helm-charts/releases/download/maelstro-0.2.0/maelstro-0.2.0.tgz
     version: 0.2.0
-generated: "2026-05-12T20:04:57.211696393Z"
+generated: "2026-05-12T20:20:29.859749791Z"
