@@ -383,6 +383,10 @@ georchestra:
     #   storage_class_name: default or "-" for empty storageClassName
     #   accessModes: Optional - If set will override the general value for this storage
     #   - ReadWriteOnce|ReadOnlyMany|ReadWriteMany
+    #   labels: Optional - Map of extra labels to apply to the generated PVC
+    #     (e.g. velero.io/exclude-from-backup: "true" to skip filesystem backup).
+    #     Merged on top of chart defaults; user keys win on conflict.
+    #   annotations: Optional - Map of extra annotations to apply to the generated PVC.
     gn4_es:
       size: 2Gi
     geonetwork_datadir:
@@ -580,6 +584,8 @@ rabbitmq:
   storage:
     # pv_name: rabbitmq-data  # Optional: name of existing PV to bind to
     # storage_class_name: default  # Optional: storage class name
+    # labels: {}        # Optional: extra labels merged onto the PVC (user keys win)
+    # annotations: {}   # Optional: annotations applied to the PVC
     accessModes:
     - ReadWriteOnce
     size: 1Gi
