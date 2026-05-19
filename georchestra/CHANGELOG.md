@@ -1,3 +1,8 @@
+# 1.17.0
+- Remove geoserver filesystem sandbox (#225)
+- Allow custom labels and annotations on PVCs (#224)
+- Enable ability to override probes (#217)
+
 # 1.16.0
 - Add support for OTEL_* for JavaAgent with new geOrchestra analytics for sending to Vector (#219)
 
