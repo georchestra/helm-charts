@@ -564,6 +564,38 @@ database:
       password: datafeeder
       username: datafeeder
 
+redis:
+  enabled: false
+  image:
+    repository: valkey/valkey
+    tag: 9.0.4-alpine
+    pullPolicy: IfNotPresent
+  auth:
+    password: georchestra
+#   host: redis  # for external redis - if set, builtin redis deployment is disabled
+    port: "6379"
+#   existingSecret: mysecret
+  extraEnv: []
+  tolerations: []
+  podAnnotations: {}
+  # registry_secret: default
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      memory: 512Mi
+  # Storage configuration - always creates a PVC when redis is built-in
+  # Specify pvName to bind to an existing PV, otherwise dynamically provisions
+  storage:
+    # pvName: redis-data  # Optional: name of existing PV to bind to
+    # storageClassName: default  # Optional: storage class name
+    # labels: {}        # Optional: extra labels merged onto the PVC (user keys win)
+    # annotations: {}   # Optional: annotations applied to the PVC
+    accessModes:
+    - ReadWriteOnce
+    size: 1Gi
+
 rabbitmq:
   enabled: false
   image:

@@ -1,0 +1,20 @@
+{{- $redis := .Values.redis -}}
+{{- if and $redis.enabled (not $redis.auth.host) -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "georchestra.fullname" . }}-redis
+  labels:
+    {{- include "georchestra.labels" . | nindent 4 }}
+    app.kubernetes.io/component: {{ include "georchestra.fullname" . }}-redis
+spec:
+  type: ClusterIP
+  ports:
+  - name: redis
+    port: 6379
+    targetPort: redis
+    protocol: TCP
+  selector:
+    {{- include "georchestra.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: {{ include "georchestra.fullname" . }}-redis
+{{- end }}

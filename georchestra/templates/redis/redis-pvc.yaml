@@ -1,0 +1,38 @@
+{{- $redis := .Values.redis -}}
+{{- $redis_storage := .Values.redis.storage -}}
+{{- if and $redis.enabled (not $redis.auth.host) -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "georchestra.fullname" . }}-redis
+  {{- with $redis_storage.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    {{- include "georchestra.labels" . | nindent 4 }}
+    app.kubernetes.io/component: {{ include "georchestra.fullname" . }}-redis
+    {{- with $redis_storage.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  accessModes:
+  {{- if $redis_storage.accessModes }}
+  {{- range $redis_storage.accessModes }}
+  - {{ . | quote }}
+  {{- end }}
+  {{- else }}
+  - "ReadWriteOnce"
+  {{- end }}
+  {{- if (eq "-" $redis_storage.storageClassName) }}
+  storageClassName: ""
+  {{- else if $redis_storage.storageClassName }}
+  storageClassName: {{ $redis_storage.storageClassName }}
+  {{- end }}
+  {{- if $redis_storage.pvName }}
+  volumeName: {{ $redis_storage.pvName }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ $redis_storage.size }}
+{{- end }}

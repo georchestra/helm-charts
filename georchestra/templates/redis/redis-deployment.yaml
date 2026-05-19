@@ -1,0 +1,117 @@
+{{- $redis := .Values.redis -}}
+{{- if and $redis.enabled (not $redis.auth.host) -}}
+{{- $podAnnotations := merge (dict) .Values.podAnnotations (default dict $redis.podAnnotations) }}
+{{- $redis_secret_name := "" -}}
+{{- if $redis.auth.existingSecret }}
+{{- $redis_secret_name = $redis.auth.existingSecret -}}
+{{- else }}
+{{- $redis_secret_name = printf "%s-redis-georchestra-secret" (include "georchestra.fullname" .) -}}
+{{- end }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "georchestra.fullname" . }}-redis
+  labels:
+    {{- include "georchestra.labels" . | nindent 4 }}
+    app.kubernetes.io/component: {{ include "georchestra.fullname" . }}-redis
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "georchestra.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: {{ include "georchestra.fullname" . }}-redis
+  template:
+    metadata:
+      labels:
+        {{- include "georchestra.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: {{ include "georchestra.fullname" . }}-redis
+      {{- with $podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      nodeSelector:
+        "kubernetes.io/os": linux
+        {{- with .Values.georchestra.nodeSelector }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      containers:
+      - name: redis
+        image: "{{ $redis.image.repository }}:{{ $redis.image.tag }}"
+        imagePullPolicy: {{ $redis.image.pullPolicy }}
+        command:
+        - /bin/sh
+        - -c
+        - exec redis-server --requirepass "$REDIS_PASSWORD" --appendonly yes --dir /data
+        env:
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ $redis_secret_name }}
+              key: password
+              optional: false
+        {{- if $redis.extraEnv }}
+        {{- $redis.extraEnv | toYaml | nindent 8 }}
+        {{- end }}
+        ports:
+        - name: redis
+          containerPort: 6379
+          protocol: TCP
+        volumeMounts:
+        - name: redis-data
+          mountPath: /data
+        {{- if and $redis.probes $redis.probes.livenessProbe }}
+        livenessProbe:
+          {{- $redis.probes.livenessProbe | toYaml | nindent 10 }}
+        {{- else }}
+        livenessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - redis-cli -a "$REDIS_PASSWORD" --no-auth-warning ping | grep -q PONG
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 6
+        {{- end }}
+        {{- if and $redis.probes $redis.probes.readinessProbe }}
+        readinessProbe:
+          {{- $redis.probes.readinessProbe | toYaml | nindent 10 }}
+        {{- else }}
+        readinessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - redis-cli -a "$REDIS_PASSWORD" --no-auth-warning ping | grep -q PONG
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        {{- end }}
+        {{- if and $redis.probes $redis.probes.startupProbe }}
+        startupProbe:
+          {{- $redis.probes.startupProbe | toYaml | nindent 10 }}
+        {{- end }}
+        resources:
+          {{- toYaml $redis.resources | nindent 10 }}
+      volumes:
+      - name: redis-data
+        persistentVolumeClaim:
+          claimName: {{ include "georchestra.fullname" . }}-redis
+      {{- if $redis.registry_secret }}
+      imagePullSecrets:
+      - name: {{ $redis.registry_secret }}
+      {{- end }}
+      {{- if $redis.tolerations }}
+      tolerations:
+        {{- $redis.tolerations | toYaml | nindent 8 }}
+      {{- end }}
+      {{- if .Values.hostAliases }}
+      hostAliases:
+        {{- .Values.hostAliases | toYaml | nindent 8 }}
+      {{- end }}
+{{- end }}
