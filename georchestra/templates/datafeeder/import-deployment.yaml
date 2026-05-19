@@ -47,17 +47,31 @@ spec:
         lifecycle:
           {{- toYaml . | nindent 10 }}
         {{- end }}
+        {{- if and $webapp.probes $webapp.probes.livenessProbe }}
+        livenessProbe:
+          {{- $webapp.probes.livenessProbe | toYaml | nindent 10 }}
+        {{- else }}
         livenessProbe:
           httpGet:
             path: /index.html
             port: 80
           periodSeconds: 10
           timeoutSeconds: 5
+        {{- end }}
+        {{- if and $webapp.probes $webapp.probes.readinessProbe }}
+        readinessProbe:
+          {{- $webapp.probes.readinessProbe | toYaml | nindent 10 }}
+        {{- end }}
+        {{- if and $webapp.probes $webapp.probes.startupProbe }}
+        startupProbe:
+          {{- $webapp.probes.startupProbe | toYaml | nindent 10 }}
+        {{- else }}
         startupProbe:
           tcpSocket:
             port: 80
           failureThreshold: 5
           periodSeconds: 5
+        {{- end }}
         volumeMounts:
           - mountPath: /etc/georchestra
             name: georchestra-datadir

@@ -44,6 +44,10 @@ spec:
         ports:
         - containerPort: 5601
           name: kibana
+        {{- if and $webapp.probes $webapp.probes.livenessProbe }}
+        livenessProbe:
+          {{- $webapp.probes.livenessProbe | toYaml | nindent 10 }}
+        {{- else }}
         livenessProbe:
           httpGet:
             path: /api/status
@@ -53,6 +57,11 @@ spec:
           periodSeconds: 10
           timeoutSeconds: 5
           failureThreshold: 3
+        {{- end }}
+        {{- if and $webapp.probes $webapp.probes.readinessProbe }}
+        readinessProbe:
+          {{- $webapp.probes.readinessProbe | toYaml | nindent 10 }}
+        {{- else }}
         readinessProbe:
           httpGet:
             path: /api/status
@@ -62,6 +71,11 @@ spec:
           periodSeconds: 5
           timeoutSeconds: 3
           failureThreshold: 3
+        {{- end }}
+        {{- if and $webapp.probes $webapp.probes.startupProbe }}
+        startupProbe:
+          {{- $webapp.probes.startupProbe | toYaml | nindent 10 }}
+        {{- end }}
         volumeMounts:
           - mountPath: /usr/share/kibana/config
             name: gn4-kibana-config

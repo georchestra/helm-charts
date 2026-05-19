@@ -49,16 +49,30 @@ spec:
         ports:
         - containerPort: 8080
           name: http-proxy
+        {{- if and $webapp.probes $webapp.probes.livenessProbe }}
+        livenessProbe:
+          {{- $webapp.probes.livenessProbe | toYaml | nindent 10 }}
+        {{- else }}
         livenessProbe:
           httpGet:
             path: /cas/login
             port: 8080
           periodSeconds: 10
+        {{- end }}
+        {{- if and $webapp.probes $webapp.probes.readinessProbe }}
+        readinessProbe:
+          {{- $webapp.probes.readinessProbe | toYaml | nindent 10 }}
+        {{- end }}
+        {{- if and $webapp.probes $webapp.probes.startupProbe }}
+        startupProbe:
+          {{- $webapp.probes.startupProbe | toYaml | nindent 10 }}
+        {{- else }}
         startupProbe:
           tcpSocket:
             port: 8080
           failureThreshold: 5
           periodSeconds: 60
+        {{- end }}
         resources:
           {{- toYaml $webapp.resources | nindent 10 }}
       {{- if $webapp.extraContainers }}

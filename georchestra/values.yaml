@@ -25,6 +25,18 @@ georchestra:
       service:
         annotations: {}
       tolerations: []
+      # Example webapp probes override :
+      # probes:
+      #   livenessProbe:
+      #     httpGet:
+      #       path: /analytics/
+      #       port: 8080
+      #     periodSeconds: 10
+      #   startupProbe:
+      #     tcpSocket:
+      #       port: 8080
+      #     failureThreshold: 5
+      #     periodSeconds: 10
       resources:
         requests:
           cpu: 100m
