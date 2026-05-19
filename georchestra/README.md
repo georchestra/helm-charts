@@ -138,7 +138,27 @@ georchestra:
       # storage_class_name: my-storage-class
       # pv_name: my-existing-pv
       # existingClaim: my-existing-pvc
+      # labels:
+      #   velero.io/exclude-from-backup: "true"
+      # annotations:
+      #   example.com/owner: gis-team
 ```
+
+Each storage entry also accepts optional `labels` and `annotations` maps that are
+applied to the generated PVC's `metadata`. They are merged with the chart's
+default labels — user-supplied keys win on conflict. The most common use is
+labelling a PVC so backup tools (e.g. Velero) skip its volume data:
+
+```yaml
+georchestra:
+  storage:
+    geoserver_geodata:
+      size: 2Gi
+      labels:
+        velero.io/exclude-from-backup: "true"
+```
+
+The same `labels` / `annotations` keys are supported under `rabbitmq.storage`.
 
 ### Database
 
