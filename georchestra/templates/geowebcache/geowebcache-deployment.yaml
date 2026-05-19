@@ -77,8 +77,6 @@ spec:
         {{- if and $webapp.probes $webapp.probes.livenessProbe }}
         livenessProbe:
           {{- $webapp.probes.livenessProbe | toYaml | nindent 10 }}
-        {{- else if $webapp.livenessProbe }}
-        {{ $webapp.livenessProbe | toYaml | nindent 8 }}
         {{- else }}
         livenessProbe:
           httpGet:
