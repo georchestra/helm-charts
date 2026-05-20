@@ -79,7 +79,7 @@ spec:
             {{- toYaml . | nindent 12 }}
             {{- end }}
           volumeMounts:
-            - mountPath: /home/postgres/pgdata
+            - mountPath: /var/lib/postgresql
               name: timescaledb-data
             - mountPath: /docker-entrypoint-initdb.d/100_analytics_init.sql
               name: timescaledb-initscripts
