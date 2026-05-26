@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "http-proxy.fullname" . }}
+  labels:
+    {{- include "http-proxy.labels" . | nindent 4 }}
+data:
+  proxy.properties: |
+{{ .Values.configMap.proxyProperties | indent 4 }}
