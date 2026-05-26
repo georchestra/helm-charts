@@ -4579,6 +4579,17 @@ entries:
     urls:
     - georchestra-0.2.11-main-064bdfe.tgz
     version: 0.2.11-main-064bdfe
+  http-proxy:
+  - apiVersion: v2
+    appVersion: 1.5.0
+    created: "2026-05-26T13:13:54.369247502Z"
+    description: A Helm chart for geOrchestra http-proxy
+    digest: 8bdd27da11d78504c9800d5e681acf52f3dcfe988afd43a35ed256d85a8f300e
+    name: http-proxy
+    type: application
+    urls:
+    - https://github.com/georchestra/helm-charts/releases/download/http-proxy-0.1.0/http-proxy-0.1.0.tgz
+    version: 0.1.0
   maelstro:
   - apiVersion: v2
     appVersion: 0.0.0
@@ -4630,4 +4641,4 @@ entries:
     urls:
     - https://github.com/georchestra/helm-charts/releases/download/maelstro-0.2.0/maelstro-0.2.0.tgz
     version: 0.2.0
-generated: "2026-05-20T13:57:16.139121278Z"
+generated: "2026-05-26T13:13:54.369970602Z"
