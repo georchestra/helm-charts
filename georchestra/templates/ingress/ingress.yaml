@@ -54,14 +54,5 @@ spec:
                 port:
                   number: 8080
           {{- end }}
-          {{- if and $.Values.georchestra.webapps.geonetwork.enabled $.Values.georchestra.webapps.geonetwork.ogc_api_records.enabled }}
-          - path: /ogc-api-records
-            pathType: Prefix
-            backend:
-              service:
-                name: {{ include "georchestra.fullname" $ }}-gn4-ogc-api-records-svc
-                port:
-                  number: 8080
-          {{- end }}
     {{- end }}
   {{- end }}

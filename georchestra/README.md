@@ -28,7 +28,7 @@ This is the official Helm chart for deploying geOrchestra on Kubernetes clusters
    helm install georchestra oci://ghcr.io/georchestra/helm-charts/georchestra \
       --set fqdn=YOURDOMAIN
    ```
-   
+
    **Tip:** For testing, you can use a domain like `georchestra-127-0-1-1.nip.io` (replace with your server's IP).
 
 3. Access your geOrchestra instance at `https://YOURDOMAIN`
@@ -255,7 +255,6 @@ resources:
 | datafeeder          | 100m         | -          | 512Mi        | 512Mi      |
 | datafeeder-frontend | 50m          | -          | 128Mi        | 128Mi      |
 | geonetwork          | 200m         | 2000m      | 1512Mi       | 1512Mi     |
-| ogc-api-records     | 100m         | -          | 1Gi          | 1Gi        |
 | elasticsearch       | 200m         | 2000m      | 1512Mi       | 1512Mi     |
 | kibana              | 100m         | -          | 1Gi          | 1Gi        |
 | geoserver           | 1000m        | 4000m      | 2Gi          | 2Gi        |
@@ -274,7 +273,6 @@ resources:
 | datafeeder          | 200m         | -          | 2Gi          | 2Gi        |
 | datafeeder-frontend | 100m         | -          | 256Mi        | 256Mi      |
 | geonetwork          | 2000m        | 4000m      | 3Gi          | 3Gi        |
-| ogc-api-records     | 100m         | -          | 2Gi          | 2Gi        |
 | elasticsearch       | 1000m        | 2000m      | 4Gi          | 4Gi        |
 | kibana              | 500m         | -          | 2Gi          | 2Gi        |
 | geoserver           | 2000m        | 4000m      | 4Gi          | 4Gi        |

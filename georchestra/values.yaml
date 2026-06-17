@@ -149,25 +149,6 @@ georchestra:
         limits:
           cpu: 2000m
           memory: 1512Mi
-      ogc_api_records:
-        enabled: false
-        replicaCount: "1"
-        image:
-          repository: geonetwork/gn-cloud-ogc-api-records-service
-          pullPolicy: IfNotPresent
-          tag: "4.4.7-0"
-        extra_environment: []
-        envsubst:
-          enabled: true
-        service:
-          annotations: {}
-        tolerations: []
-        resources:
-          requests:
-            cpu: 100m
-            memory: 1Gi
-          limits:
-            memory: 1Gi
       elasticsearch:
         enabled: true
         replicaCount: "1"
