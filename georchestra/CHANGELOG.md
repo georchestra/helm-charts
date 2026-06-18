@@ -1,3 +1,6 @@
+# 1.19.0
+- removal of gn-ogc-api-records (#231)
+
 # 1.18.0
 - add redis support in the helm chart (#226)
 - Add ES username and password envs in GN4 OGC API's deployment (#227)
