@@ -21,7 +21,7 @@ spec:
           nodeSelector:
             "kubernetes.io/os": linux
             {{- with .Values.georchestra.nodeSelector }}
-            {{- toYaml . | nindent 8 }}
+             {{- toYaml . | nindent 12 }}
             {{- end }}
           containers:
           - name: fix-permissions-pvc
