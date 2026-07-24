@@ -1,0 +1,651 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "geOrchestra Helm Chart values",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "georchestra": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "nodeSelector": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Additional nodeSelector items applied to all geOrchestra pods."
+        },
+        "webapps": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Per-webapp configuration. Setting replicaCount > 1 is not supported by the chart (cardinality 0..1).",
+          "properties": {
+            "analytics": { "$ref": "#/$defs/webapp" },
+            "cas": { "$ref": "#/$defs/webapp" },
+            "console": { "$ref": "#/$defs/webapp" },
+            "datafeeder": {
+              "allOf": [
+                { "$ref": "#/$defs/webapp" },
+                {
+                  "type": "object",
+                  "properties": {
+                    "envsubst": {
+                      "type": "object",
+                      "properties": {
+                        "enabled": { "type": "boolean" }
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "datafeeder_frontend": { "$ref": "#/$defs/webapp" },
+            "geonetwork": {
+              "allOf": [
+                { "$ref": "#/$defs/webapp" },
+                {
+                  "type": "object",
+                  "properties": {
+                    "extra_volumes": { "type": "array" },
+                    "extra_volumeMounts": { "type": "array" },
+                    "elasticsearch": {
+                      "type": "object",
+                      "additionalProperties": true,
+                      "properties": {
+                        "enabled": { "type": "boolean" },
+                        "replicaCount": { "type": "string" },
+                        "image": { "$ref": "#/$defs/image" },
+                        "service": { "$ref": "#/$defs/service" },
+                        "tolerations": { "type": "array" },
+                        "elasticPassword": { "type": "string" },
+                        "resources": { "$ref": "#/$defs/resources" }
+                      }
+                    },
+                    "kibana": {
+                      "type": "object",
+                      "additionalProperties": true,
+                      "properties": {
+                        "enabled": { "type": "boolean" },
+                        "replicaCount": { "type": "string" },
+                        "image": { "$ref": "#/$defs/image" },
+                        "service": { "$ref": "#/$defs/service" },
+                        "tolerations": { "type": "array" },
+                        "kibanaSystemPassword": { "type": "string" },
+                        "resources": { "$ref": "#/$defs/resources" },
+                        "host": { "type": "string" },
+                        "port": { "type": "string" }
+                      }
+                    },
+                    "housekeeping": {
+                      "type": "object",
+                      "additionalProperties": true,
+                      "properties": {
+                        "harvester_logs": {
+                          "type": "object",
+                          "properties": {
+                            "enabled": { "type": "boolean" },
+                            "schedule": { "type": "string" }
+                          }
+                        },
+                        "tolerations": { "type": "array" },
+                        "resources": { "type": "object", "additionalProperties": true }
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "geoserver": {
+              "allOf": [
+                { "$ref": "#/$defs/webapp" },
+                {
+                  "type": "object",
+                  "properties": {
+                    "extra_volumes": { "type": "array" },
+                    "extra_volumeMounts": { "type": "array" }
+                  }
+                }
+              ]
+            },
+            "geowebcache": {
+              "allOf": [
+                { "$ref": "#/$defs/webapp" },
+                {
+                  "type": "object",
+                  "properties": {
+                    "envsubst": {
+                      "type": "object",
+                      "properties": {
+                        "enabled": { "type": "boolean" }
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "header": { "$ref": "#/$defs/webapp" },
+            "mapstore": {
+              "allOf": [
+                { "$ref": "#/$defs/webapp" },
+                {
+                  "type": "object",
+                  "properties": {
+                    "command": { "type": "array" },
+                    "args": { "type": "array" },
+                    "lifecycle": { "type": "object", "additionalProperties": true }
+                  }
+                }
+              ]
+            },
+            "openldap": {
+              "allOf": [
+                { "$ref": "#/$defs/webapp" },
+                {
+                  "type": "object",
+                  "properties": {
+                    "extraVolumeMounts": { "type": "array" },
+                    "extraVolumes": { "type": "array" },
+                    "extraContainers": { "type": "array" }
+                  }
+                }
+              ]
+            },
+            "proxy": {
+              "allOf": [
+                { "$ref": "#/$defs/webapp" },
+                {
+                  "type": "object",
+                  "properties": {
+                    "envsubst": {
+                      "type": "object",
+                      "properties": {
+                        "enabled": { "type": "boolean" }
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "gateway": {
+              "allOf": [
+                { "$ref": "#/$defs/webapp" },
+                {
+                  "type": "object",
+                  "properties": {
+                    "environment": {
+                      "type": "object",
+                      "additionalProperties": { "type": "string" }
+                    },
+                    "analytics": {
+                      "type": "object",
+                      "properties": {
+                        "enabled": { "type": "boolean" },
+                        "otlpEndpoint": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "datadir": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "volume": {
+              "type": "array",
+              "items": { "type": "object", "additionalProperties": true }
+            },
+            "git": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "url": { "type": "string" },
+                "ref": { "type": "string" },
+                "ssh_secret": { "type": "string" }
+              }
+            }
+          }
+        },
+        "storage": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Persistent volume configuration for each geOrchestra data store. Each entry accepts size, pv_name, existingClaim, storage_class_name, accessModes, labels and annotations.",
+          "properties": {
+            "gn4_es": { "$ref": "#/$defs/storageEntry" },
+            "geonetwork_datadir": { "$ref": "#/$defs/storageEntry" },
+            "geoserver_datadir": { "$ref": "#/$defs/storageEntry" },
+            "geoserver_geodata": { "$ref": "#/$defs/storageEntry" },
+            "geoserver_tiles": { "$ref": "#/$defs/storageEntry" },
+            "geowebcache_tiles": { "$ref": "#/$defs/storageEntry" },
+            "mapstore_datadir": { "$ref": "#/$defs/storageEntry" },
+            "openldap_data": { "$ref": "#/$defs/storageEntry" },
+            "openldap_config": { "$ref": "#/$defs/storageEntry" },
+            "storage_class_name": { "type": "string" },
+            "accessModes": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["ReadWriteOnce", "ReadOnlyMany", "ReadWriteMany", "ReadWriteOncePod"]
+              }
+            }
+          }
+        },
+        "smtp_smarthost": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "mailname": { "type": "string" },
+            "postmaster": { "type": "string" },
+            "relay_host": { "type": "string" },
+            "relay_port": { "type": ["string", "integer"] },
+            "relay_username": { "type": "string" },
+            "relay_password": { "type": "string" },
+            "image": { "$ref": "#/$defs/image" },
+            "extra_environment": { "$ref": "#/$defs/extraEnvironment" },
+            "resources": { "$ref": "#/$defs/resources" }
+          }
+        }
+      }
+    },
+    "fqdn": {
+      "type": "string",
+      "description": "Fully qualified domain name used to expose the geOrchestra instance."
+    },
+    "ingress": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "annotations": { "type": "object", "additionalProperties": { "type": "string" } },
+        "hosts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "host": { "type": "string" },
+              "paths": { "type": "array" }
+            }
+          }
+        },
+        "tls": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "secretName": { "type": "string" },
+              "hosts": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        "className": { "type": "string" }
+      }
+    },
+    "ldap": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "host": { "type": "string", "description": "External LDAP host. If unset, the builtin OpenLDAP is used." },
+        "port": { "type": ["string", "integer"] },
+        "adminPassword": { "type": "string" },
+        "scheme": { "type": "string", "enum": ["ldap", "ldaps"] },
+        "baseDn": { "type": "string" },
+        "usersRdn": { "type": "string" },
+        "adminDn": { "type": "string" },
+        "rolesRdn": { "type": "string" },
+        "orgsRdn": { "type": "string" },
+        "existingSecret": { "type": "string" }
+      }
+    },
+    "elasticsearch": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "External Elasticsearch connection used by GeoNetwork when the builtin ES is disabled.",
+      "properties": {
+        "host": { "type": "string" },
+        "port": { "type": ["string", "integer"] },
+        "username": { "type": "string" },
+        "password": { "type": "string" }
+      }
+    },
+    "database": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "builtin": { "type": "boolean", "description": "Use the bundled PostgreSQL chart. Set to false to use an external database." },
+        "image": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "repository": { "type": "string" },
+            "tag": { "type": "string" }
+          }
+        },
+        "auth": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "database": { "type": "string" },
+            "host": { "type": "string" },
+            "password": { "type": "string" },
+            "postgresPassword": { "type": "string" },
+            "port": { "type": ["string", "integer"] },
+            "ssl": { "type": "boolean" },
+            "username": { "type": "string" },
+            "existingSecret": { "type": "string" },
+            "secretKeys": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "adminPasswordKey": { "type": "string" },
+                "userPasswordKey": { "type": "string" }
+              }
+            }
+          }
+        },
+        "primary": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Parameters for the builtin PostgreSQL primary (passed to the bitnami subchart).",
+          "properties": {
+            "startupProbe": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "enabled": { "type": "boolean" }
+              }
+            },
+            "containerSecurityContext": { "type": "object", "additionalProperties": true },
+            "persistentVolumeClaimRetentionPolicy": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "enabled": { "type": "boolean" }
+              }
+            },
+            "extraVolumeMounts": { "type": "array" },
+            "extraVolumes": { "type": "array" },
+            "initdb": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "username": { "type": "string" },
+                "password": { "type": "string" }
+              }
+            },
+            "resources": { "$ref": "#/$defs/resources" }
+          }
+        },
+        "geodata": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "auth": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "database": { "type": "string" },
+                "host": { "type": "string" },
+                "password": { "type": "string" },
+                "port": { "type": ["string", "integer"] },
+                "ssl": { "type": "boolean" },
+                "username": { "type": "string" },
+                "existingSecret": { "type": "string" }
+              }
+            }
+          }
+        },
+        "datafeeder": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "auth": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "database": { "type": "string" },
+                "host": { "type": "string" },
+                "password": { "type": "string" },
+                "port": { "type": ["string", "integer"] },
+                "ssl": { "type": "boolean" },
+                "username": { "type": "string" },
+                "existingSecret": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "redis": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "image": { "$ref": "#/$defs/image" },
+        "auth": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "password": { "type": "string" },
+            "host": { "type": "string", "description": "External Redis host. If set, the builtin Redis deployment is disabled." },
+            "port": { "type": ["string", "integer"] },
+            "existingSecret": { "type": "string" }
+          }
+        },
+        "extraEnv": { "type": "array" },
+        "tolerations": { "type": "array" },
+        "podAnnotations": { "type": "object", "additionalProperties": true },
+        "registry_secret": { "type": "string" },
+        "resources": { "$ref": "#/$defs/resources" },
+        "storage": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "pvName": { "type": "string" },
+            "storageClassName": { "type": "string" },
+            "labels": { "type": "object", "additionalProperties": { "type": "string" } },
+            "annotations": { "type": "object", "additionalProperties": { "type": "string" } },
+            "accessModes": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["ReadWriteOnce", "ReadOnlyMany", "ReadWriteMany", "ReadWriteOncePod"]
+              }
+            },
+            "size": { "type": "string" }
+          }
+        }
+      }
+    },
+    "rabbitmq": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "image": { "$ref": "#/$defs/image" },
+        "auth": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "username": { "type": "string" },
+            "password": { "type": "string" },
+            "erlangCookie": { "type": "string" },
+            "host": { "type": "string", "description": "External RabbitMQ host. If set, the builtin RabbitMQ deployment is disabled." },
+            "port": { "type": ["string", "integer"] },
+            "existingSecret": { "type": "string" }
+          }
+        },
+        "extra_environment": { "$ref": "#/$defs/extraEnvironment" },
+        "tolerations": { "type": "array" },
+        "podAnnotations": { "type": "object", "additionalProperties": true },
+        "registry_secret": { "type": "string" },
+        "resources": { "$ref": "#/$defs/resources" },
+        "storage": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "pv_name": { "type": "string" },
+            "storage_class_name": { "type": "string" },
+            "labels": { "type": "object", "additionalProperties": { "type": "string" } },
+            "annotations": { "type": "object", "additionalProperties": { "type": "string" } },
+            "accessModes": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["ReadWriteOnce", "ReadOnlyMany", "ReadWriteMany", "ReadWriteOncePod"]
+              }
+            },
+            "size": { "type": "string" }
+          }
+        }
+      }
+    },
+    "hostAliases": {
+      "type": "array",
+      "description": "Override /etc/hosts entries for ALL pods.",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "ip": { "type": "string" },
+          "hostnames": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "tooling": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "general": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "image": { "$ref": "#/$defs/image" }
+          }
+        },
+        "envsubst": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "image": { "$ref": "#/$defs/image" }
+          }
+        },
+        "fixPermissionsPvc": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "schedule": { "type": "string" },
+            "tolerations": { "type": "array" },
+            "podAnnotations": { "type": "object", "additionalProperties": true }
+          }
+        }
+      }
+    },
+    "podAnnotations": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Annotations applied to all pods; can be merged/overridden per webapp, smtp_smarthost and rabbitmq."
+    }
+  },
+  "$defs": {
+    "image": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "repository": { "type": "string" },
+        "pullPolicy": {
+          "type": "string",
+          "enum": ["Always", "IfNotPresent", "Never"]
+        },
+        "tag": { "type": "string" }
+      }
+    },
+    "service": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "annotations": { "type": "object", "additionalProperties": { "type": "string" } }
+      }
+    },
+    "resources": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "requests": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "cpu": { "type": ["string", "number"] },
+            "memory": { "type": ["string", "number"] }
+          }
+        },
+        "limits": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "cpu": { "type": ["string", "number"] },
+            "memory": { "type": ["string", "number"] }
+          }
+        }
+      }
+    },
+    "extraEnvironment": {
+      "type": "array",
+      "description": "Extra environment variables injected into the container.",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "name": { "type": "string" },
+          "value": { "type": "string" }
+        }
+      }
+    },
+    "storageEntry": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "size": { "type": "string", "description": "Size of the storage, e.g. 2Gi, 256Mi." },
+        "pv_name": { "type": "string", "description": "Optional: name of an existing PersistentVolume to bind to." },
+        "existingClaim": { "type": "string", "description": "Optional: reference an existing PVC instead of creating one (overrides pv_name)." },
+        "storage_class_name": { "type": "string" },
+        "accessModes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["ReadWriteOnce", "ReadOnlyMany", "ReadWriteMany", "ReadWriteOncePod"]
+          }
+        },
+        "labels": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "Extra labels merged onto the generated PVC (user keys win on conflict)."
+        },
+        "annotations": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "Extra annotations applied to the generated PVC."
+        }
+      }
+    },
+    "webapp": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Common webapp configuration. replicaCount is a string and a value greater than 1 is not supported by the chart.",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "replicaCount": { "type": "string" },
+        "image": { "$ref": "#/$defs/image" },
+        "extra_environment": { "$ref": "#/$defs/extraEnvironment" },
+        "registry_secret": { "type": "string" },
+        "service": { "$ref": "#/$defs/service" },
+        "tolerations": { "type": "array" },
+        "resources": { "$ref": "#/$defs/resources" },
+        "lifecycle": { "type": "object", "additionalProperties": true },
+        "probes": { "type": "object", "additionalProperties": true }
+      }
+    }
+  }
+}

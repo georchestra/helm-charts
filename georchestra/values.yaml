@@ -295,7 +295,7 @@ georchestra:
       extraVolumes: []
       #  - name: copy-portal-skins
       #    emptyDir: {}
-      extraContainers:
+      extraContainers: []
       #  - name: my-sidecar
       #    image: nginx:latest
       # registry_secret: default
