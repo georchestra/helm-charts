@@ -71,6 +71,8 @@ spec:
           env:
             - name: VECTOR_CONFIG
               value: "/etc/vector/*.yaml"
+            - name: VECTOR_DANGEROUSLY_ALLOW_ENV_VAR_INTERPOLATION
+              value: "true"
             {{- include "analytics.timescaledb-envs" . | nindent 12 }}
             {{- with $webapp.extraEnv }}
             {{- toYaml . | nindent 12 }}
