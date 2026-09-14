@@ -41,4 +41,10 @@ TimescaleDB TSDB_* environment variables (list items to include under env:).
     secretKeyRef:
       name: {{ include "analytics.timescaledb-connection-secret-name" . | quote }}
       key: password
+- name: TSDB_CONNECTION_STRING
+  valueFrom:
+    secretKeyRef:
+      name: {{ include "analytics.timescaledb-connection-secret-name" . | quote }}
+      key: connection_url
+
 {{- end }}

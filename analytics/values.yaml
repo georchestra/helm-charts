@@ -24,6 +24,7 @@ timescaledb:
   auth:
     # existingSecret is the name of an existing secret containing database credentials.
     # If set, it will replace the auth settings below.
+    # Make sure to respect the secret format by looking at the k8s manifests in the helm chart.
     # existingSecret: my-existing-secret
     # database is the name of the database to create.
     database: analytics

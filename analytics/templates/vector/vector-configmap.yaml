@@ -30,9 +30,9 @@ data:
       tsdb:
         type: postgres
         # Listen to a "hook" transform that will be defined in the custom file
-        inputs: 
+        inputs:
           - tsdb_input
-        endpoint: "postgres://${TSDB_USER}:${TSDB_PASSWORD}@${TSDB_HOST}:${TSDB_PORT}/${TSDB_NAME}"
+        endpoint: "${TSDB_CONNECTION_STRING}"
         table: "${TSDB_OTEL_TABLE:-analytics.opentelemetry_buffer}"
         pool_size: 5
   custom.yaml: |
