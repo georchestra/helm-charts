@@ -19,6 +19,11 @@ spec:
       ttlSecondsAfterFinished: 86400
       template:
         spec:
+          nodeSelector:
+            "kubernetes.io/os": linux
+            {{- with .Values.georchestra.nodeSelector }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
           containers:
           - name: clean-harvester-logs
             image: "{{ .Values.tooling.general.image.repository }}:{{ .Values.tooling.general.image.tag }}"
