@@ -143,6 +143,14 @@ airflow:
     - name: AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION
       value: "False"
 
+  # Templated by the airflow chart, in its own context (.Values are airflow's, not datafeeder's).
+  # BACKEND_INTERNAL_URL is used by the DAGs to call the backend back (e.g. scheduled ingestions).
+  # It mirrors the backend service name ("datafeeder-python.fullname"-backend-svc): if you set
+  # fullnameOverride or nameOverride, override extraEnv accordingly.
+  extraEnv: |
+    - name: BACKEND_INTERNAL_URL
+      value: {{ printf "http://%s-backend-svc:8000" (ternary .Release.Name (printf "%s-datafeeder" .Release.Name) (contains "datafeeder" .Release.Name) | trunc 63 | trimSuffix "-") | quote }}
+
   redis:
     # To change
     password: ~

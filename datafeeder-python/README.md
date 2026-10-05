@@ -45,5 +45,5 @@ WARNING: Change `X.X.X` by the latest version of the helm chart found in https:/
 Apply only for a customized installation.
 
 ```
-helm upgrade -f your-values.yaml datafeeder oci://ghcr.io/georchestra/helm-charts/datafeeder --version 0.1.6
+helm upgrade -f your-values.yaml datafeeder oci://ghcr.io/georchestra/helm-charts/datafeeder --version 0.1.7
 ```
