@@ -13,6 +13,12 @@ defined by the `PROXY_PROP_PATH` environment variable. The chart renders
 `values.configMap.proxyProperties` into a `ConfigMap` and mounts it at
 `/config/proxy.properties`.
 
+`PROXY_PROP_PATH` defaults to `/proxy.properties,/config/proxy.properties`:
+the defaults bundled in the image (e.g. `requestHeaderWhitelist`) are loaded
+first, then the mounted file overrides them key by key. To forward all request
+headers again, set `requestHeaderWhitelist =` (empty value) in your
+`proxyProperties`; commenting it out keeps the bundled default.
+
 ## Network policies
 
 Set `networkPolicy.enabled=true` to apply the bundled `NetworkPolicy`.

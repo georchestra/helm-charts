@@ -35,7 +35,7 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-            {{- $defaultEnv := dict "PORT" (.Values.service.port | toString) "PROXY_PROP_PATH" "/config/proxy.properties" }}
+            {{- $defaultEnv := dict "PORT" (.Values.service.port | toString) "PROXY_PROP_PATH" "/proxy.properties,/config/proxy.properties" }}
             {{- range $key, $value := merge (default (dict) .Values.env) $defaultEnv }}
             - name: {{ $key }}
               value: {{ $value | quote }}

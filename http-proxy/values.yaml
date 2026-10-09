@@ -31,6 +31,8 @@ env: {}
 
 # Contents of the proxy.properties file rendered into a ConfigMap and
 # mounted at /config/proxy.properties (referenced via PROXY_PROP_PATH).
+# It is merged key-by-key on top of the defaults bundled in the image
+# (/proxy.properties): only set the keys you want to override.
 # See https://github.com/georchestra/http-proxy for the available keys.
 configMap:
   proxyProperties: |
