@@ -18,7 +18,7 @@ timescaledb:
     # repository is the TimescaleDB container image repository.
     repository: timescale/timescaledb
     # tag is the TimescaleDB container image tag.
-    tag: 2.26.1-pg18
+    tag: 2.30.2-pg18
     # pullPolicy is the image pull policy.
     pullPolicy: IfNotPresent
   auth:
@@ -231,9 +231,29 @@ cli:
     # repository is the CLI container image repository.
     repository: georchestra/analytics-cli
     # tag is the CLI container image tag.
-    tag: 2.0.0
+    tag: 2.2.0
     # pullPolicy is the image pull policy.
     pullPolicy: IfNotPresent
+  # Run the Alembic schema migration before Vector or the CLI process data.
+  migrations:
+    enabled: true
+    targetRevision: "head"
+    backoffLimit: 6
+    activeDeadlineSeconds: 900
+    # Enable only for the first deployment over an existing pre-Alembic schema.
+    # The command validates the expected baseline before recording revision 0001.
+    existingDatabase:
+      enabled: false
+      baselineRevision: "0001"
+  # Recovery worker for the durable OGC aggregation queue. buffer2db also drains
+  # this queue after ingestion; this CronJob retries any work left behind.
+  aggregation:
+    enabled: true
+    schedule: "15 * * * *"
+    batchSize: 100
+    backoffLimit: 2
+    successfulJobsHistoryLimit: 1
+    failedJobsHistoryLimit: 3
   fakeRecords:
     # enabled is whether to generate fake log records instead of processing real ones.
     # Useful for dashboard development.
@@ -283,6 +303,14 @@ cli:
     performance:
       # batchSize is the number of records per batch.
       batchSize: 10000
+      # Maximum number of queued hourly OGC buckets processed per transaction.
+      ogcAggregationBatchSize: 100
+    # TimescaleDB access-log storage policies applied by the migration Job.
+    timescaledb:
+      chunkInterval: "7 days"
+      retention:
+        dropAfter: "3 years"
+        scheduleInterval: "1 week"
     # appsMapping is the custom application name mappings.
     appsMapping: {}
     # timezone is the local timezone for time-related handling.

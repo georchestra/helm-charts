@@ -5,6 +5,34 @@ Expand the name of the chart.
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
+{{/* Block data producers until Alembic reaches the configured revision. */}}
+{{- define "analytics.revisionGate" -}}
+{{- if and .Values.cli.enabled .Values.cli.migrations.enabled }}
+initContainers:
+  - name: wait-for-database-revision
+    image: "{{ .Values.cli.image.repository }}:{{ .Values.cli.image.tag }}"
+    imagePullPolicy: {{ .Values.cli.image.pullPolicy }}
+    command: ["/bin/sh", "-ec"]
+    args:
+      - |
+        until analytics-cli db require-revision --revision {{ .Values.cli.migrations.targetRevision | quote }}; do
+          echo "Database migration is not ready; retrying in 2 seconds"
+          sleep 2
+        done
+    envFrom:
+      - secretRef:
+          name: {{ include "analytics.timescaledb-env-secret-name" . | quote }}
+    env:
+      {{- include "analytics.timescaledb-envs" . | nindent 6 }}
+      - name: GEORCHESTRA_ANALYTICS_CLI_CONFIG_FILE
+        value: /etc/georchestra/analytics/cli.yaml
+    volumeMounts:
+      - name: cli-config
+        subPath: cli.yaml
+        mountPath: /etc/georchestra/analytics/cli.yaml
+{{- end }}
+{{- end }}
+
 {{/*
 Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).

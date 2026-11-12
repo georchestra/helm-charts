@@ -27,6 +27,7 @@ spec:
         org.georchestra.service/name: {{ include "analytics.fullname" . }}-vector
         app.kubernetes.io/component: {{ include "analytics.fullname" . }}-vector
     spec:
+      {{- include "analytics.revisionGate" . | nindent 6 }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -102,6 +103,11 @@ spec:
       - name: vector-config
         configMap:
           name: {{ include "analytics.fullname" . }}-vector-config
+      {{- if and .Values.cli.enabled .Values.cli.migrations.enabled }}
+      - name: cli-config
+        configMap:
+          name: {{ include "analytics.fullname" . }}-cli-config
+      {{- end }}
       {{- with $webapp.extraVolumes }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
