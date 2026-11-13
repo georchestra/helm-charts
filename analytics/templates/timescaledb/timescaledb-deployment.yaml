@@ -81,12 +81,14 @@ spec:
           volumeMounts:
             - mountPath: /var/lib/postgresql
               name: timescaledb-data
+            {{- if not (and $.Values.cli.enabled $.Values.cli.migrations.enabled) }}
             - mountPath: /docker-entrypoint-initdb.d/100_analytics_init.sql
               name: timescaledb-initscripts
               subPath: 100_analytics_init.sql
             - mountPath: /docker-entrypoint-initdb.d/101_analytics_ogc_views.sql
               name: timescaledb-initscripts
               subPath: 101_analytics_ogc_views.sql
+            {{- end }}
             {{- with $webapp.extraVolumeMounts }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
@@ -109,9 +111,11 @@ spec:
       - name: timescaledb-data
         persistentVolumeClaim:
           claimName: {{ include "analytics.fullname" . }}-timescaledb-data
+      {{- if not (and .Values.cli.enabled .Values.cli.migrations.enabled) }}
       - name: timescaledb-initscripts
         configMap:
           name: {{ include "analytics.fullname" . }}-timescaledb-initscripts
+      {{- end }}
       {{- with $webapp.extraVolumes }}
       {{- toYaml . | nindent 6 }}
       {{- end }}

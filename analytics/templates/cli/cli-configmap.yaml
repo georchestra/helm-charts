@@ -17,12 +17,18 @@ data:
       database: !ENV "${TSDB_NAME:analytics}"
       username: !ENV "${TSDB_USER:tsdb}"
       password: !ENV "${TSDB_PASSWORD:secret}"
+      timescaledb:
+        chunk_interval: {{ $webapp.config.timescaledb.chunkInterval | quote }}
+        retention:
+          drop_after: {{ $webapp.config.timescaledb.retention.dropAfter | quote }}
+          schedule_interval: {{ $webapp.config.timescaledb.retention.scheduleInterval | quote }}
 
     metrics:
       {{- toYaml $webapp.config.metrics | nindent 6 }}
 
     performance:
-      {{- toYaml $webapp.config.performance | nindent 6 }}
+      batch_size: {{ $webapp.config.performance.batchSize }}
+      ogc_aggregation_batch_size: {{ $webapp.config.performance.ogcAggregationBatchSize }}
 
     timezone: {{ $webapp.config.timezone | quote }}
 
