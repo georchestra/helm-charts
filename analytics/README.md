@@ -9,7 +9,8 @@ upgrade the database schema. The migration Job is created for every Helm release
 revision, upgrades the schema to the configured target and synchronizes the
 TimescaleDB access-log policies.
 
-New installations use the default configuration:
+Database migrations are disabled by default. Enable them explicitly after
+reviewing the target database and taking any required backup:
 
 ```yaml
 cli:
@@ -58,11 +59,16 @@ The chart adds a recovery CronJob for the durable OGC aggregation queue:
 
 ```yaml
 cli:
+  migrations:
+    enabled: true
   aggregation:
     enabled: true
     schedule: "15 * * * *"
     batchSize: 100
 ```
+
+Aggregation is disabled by default and must be enabled explicitly after the
+Alembic migration has created the persistent stores and durable queue.
 
 The regular `buffer2db` process also drains the queue after ingestion. The
 additional CronJob retries pending buckets and processes work queued by other

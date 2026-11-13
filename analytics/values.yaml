@@ -236,7 +236,8 @@ cli:
     pullPolicy: IfNotPresent
   # Run the Alembic schema migration before Vector or the CLI process data.
   migrations:
-    enabled: true
+    # Opt in explicitly for each deployment after reviewing the database state.
+    enabled: false
     targetRevision: "head"
     backoffLimit: 6
     activeDeadlineSeconds: 900
@@ -248,7 +249,8 @@ cli:
   # Recovery worker for the durable OGC aggregation queue. buffer2db also drains
   # this queue after ingestion; this CronJob retries any work left behind.
   aggregation:
-    enabled: true
+    # Enable together with migrations after the persistent OGC schema is ready.
+    enabled: false
     schedule: "15 * * * *"
     batchSize: 100
     backoffLimit: 2
