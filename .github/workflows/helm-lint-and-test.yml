@@ -33,6 +33,11 @@ jobs:
       - name: Helm Installation
         uses: azure/setup-helm@v4
 
+      - name: Add Helm repositories
+        run: |
+          helm repo add airflow https://airflow.apache.org
+          helm repo update
+
       - uses: actions/setup-python@main
         with:
           check-latest: true
