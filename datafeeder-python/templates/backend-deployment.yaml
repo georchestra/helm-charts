@@ -68,21 +68,39 @@ spec:
           - name: GEOSERVER_INTERNAL_URL
             value: "{{ $webapp.config.geoserver.url | default "http://georchestra-gateway-svc:8080/geoserver" }}"
           - name: GEOSERVER_USER
-            value: "{{ $webapp.config.geoserver.username }}"
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "datafeeder-python.fullname" . }}-backend-secret
+                key: GEOSERVER_USERNAME
           - name: GEOSERVER_PASSWORD
-            value: "{{ $webapp.config.geoserver.password }}"
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "datafeeder-python.fullname" . }}-backend-secret
+                key: GEOSERVER_PASSWORD
           - name: GEONETWORK_INTERNAL_URL
             value: "{{ $webapp.config.geonetwork.url | default "http://georchestra-gateway-svc:8080/geonetwork" }}"
           - name: GEONETWORK_USERNAME
-            value: "{{ $webapp.config.geonetwork.username }}"
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "datafeeder-python.fullname" . }}-backend-secret
+                key: GEONETWORK_USERNAME
           - name: GEONETWORK_PASSWORD
-            value: "{{ $webapp.config.geonetwork.password }}"
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "datafeeder-python.fullname" . }}-backend-secret
+                key: GEONETWORK_PASSWORD
           - name: AIRFLOW_INTERNAL_URL
             value: {{ $webapp.config.airflow.url | default (printf "http://%s-api-server:8080/airflow" .Release.Name) | quote }}
           - name: AIRFLOW_USERNAME
-            value: "{{ $webapp.config.airflow.username }}"
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "datafeeder-python.fullname" . }}-backend-secret
+                key: AIRFLOW_USERNAME
           - name: AIRFLOW_PASSWORD
-            value: "{{ $webapp.config.airflow.password }}"
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "datafeeder-python.fullname" . }}-backend-secret
+                key: AIRFLOW_PASSWORD
           - name: METADATA_FETCH_GROUPS_URL
             value: "{{ $webapp.config.metadataFetchGroupsUrl | default "http://georchestra-console-svc:8080/console/internal/organizations" }}"
           - name: DATA_FETCH_GROUPS_URL

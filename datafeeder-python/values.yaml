@@ -63,8 +63,6 @@ backend:
   config:
     dataPublicUrl: https://georchestra-127-0-1-1.traefik.me/geoserver
     metadataPublicUrl: https://georchestra-127-0-1-1.traefik.me/geonetwork
-    secretKey: change-me
-    encryptionKey: change-me
     frontend:
       # Change to your domain with subpath /datafeeder
       url: https://georchestra-127-0-1-1.traefik.me/datafeeder
