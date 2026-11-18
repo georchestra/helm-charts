@@ -1,3 +1,6 @@
+# 1.22.0
+- Add `extra_java_opts` to the GeoNetwork Elasticsearch deployment, appended to `ES_JAVA_OPTS`
+
 # 1.21.0
 - Add `extra_environment` support to the GeoNetwork Elasticsearch deployment
 

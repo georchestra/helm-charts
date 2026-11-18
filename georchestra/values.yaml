@@ -161,6 +161,8 @@ georchestra:
         tolerations: []
         # Password of the elastic user
         elasticPassword: changeme
+        # Extra JVM options appended to ES_JAVA_OPTS (Elasticsearch ignores JAVA_TOOL_OPTIONS and _JAVA_OPTIONS)
+        extra_java_opts: ""
         extra_environment: []
         resources:
           requests:
