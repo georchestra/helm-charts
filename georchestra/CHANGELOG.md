@@ -1,3 +1,6 @@
+# 1.21.0
+- Add `extra_environment` support to the GeoNetwork Elasticsearch deployment
+
 # 1.19.0
 - removal of gn-ogc-api-records (#231)
 
