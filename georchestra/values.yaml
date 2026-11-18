@@ -161,6 +161,7 @@ georchestra:
         tolerations: []
         # Password of the elastic user
         elasticPassword: changeme
+        extra_environment: []
         resources:
           requests:
             cpu: 200m
