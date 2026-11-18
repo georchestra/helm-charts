@@ -28,8 +28,6 @@ spec:
             image: "{{ .Values.tooling.general.image.repository }}:{{ .Values.tooling.general.image.tag }}"
             imagePullPolicy: IfNotPresent
             command:
-            - sh
-            - -c
             - ionice
             - -c2
             - -n7
@@ -52,16 +50,16 @@ spec:
           volumes:
           - name: geonetwork-datadir
             persistentVolumeClaim:
-              claimName: {{ include "georchestra.fullname" . }}-geonetwork-datadir
+              claimName: {{ include "georchestra.storage.claimName" (list . "geonetwork_datadir") }}
           - name: geoserver-tiles
             persistentVolumeClaim:
-              claimName: {{ include "georchestra.fullname" . }}-geoserver-tiles
+              claimName: {{ include "georchestra.storage.claimName" (list . "geoserver_tiles") }}
           - name: geoserver-geodata
             persistentVolumeClaim:
-              claimName: {{ include "georchestra.fullname" . }}-geoserver-geodata
+              claimName: {{ include "georchestra.storage.claimName" (list . "geoserver_geodata") }}
           - name: geoserver-datadir
             persistentVolumeClaim:
-              claimName: {{ include "georchestra.fullname" . }}-geoserver-datadir
+              claimName: {{ include "georchestra.storage.claimName" (list . "geoserver_datadir") }}
           restartPolicy: OnFailure
           {{- if .Values.georchestra.webapps.geoserver.tolerations }}
           tolerations:

@@ -1,3 +1,7 @@
+# 1.22.1
+- fix-permissions-pvc cronjob: use `storage.<volume>.existingClaim` when set, instead of always mounting the chart-generated PVC names
+- fix-permissions-pvc cronjob: fix the command, it was wrapped in `sh -c` so only `ionice` was executed and the `chown` never ran. The nightly `chown -R 999:999` on the GeoServer/GeoNetwork volumes is now effective
+
 # 1.22.0
 - Add `extra_java_opts` to the GeoNetwork Elasticsearch deployment, appended to `ES_JAVA_OPTS`
 
