@@ -26,6 +26,7 @@ spec:
             {{- include "analytics.selectorLabels" . | nindent 12 }}
             app.kubernetes.io/component: {{ include "analytics.fullname" . }}-cli
         spec:
+          {{- include "analytics.revisionGate" . | nindent 10 }}
           {{- with .Values.imagePullSecrets }}
           imagePullSecrets:
             {{- toYaml . | nindent 12 }}

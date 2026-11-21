@@ -1,0 +1,80 @@
+{{- $cli := .Values.cli -}}
+{{- $migrations := $cli.migrations -}}
+{{- if and $cli.enabled $migrations.enabled -}}
+{{- $jobBase := include "analytics.fullname" . | trunc 43 | trimSuffix "-" -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ printf "%s-db-migrate-%d" $jobBase .Release.Revision }}
+  labels:
+    {{- include "analytics.labels" . | nindent 4 }}
+    app.kubernetes.io/component: database-migration
+spec:
+  backoffLimit: {{ $migrations.backoffLimit }}
+  activeDeadlineSeconds: {{ $migrations.activeDeadlineSeconds }}
+  template:
+    metadata:
+      labels:
+        {{- include "analytics.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: database-migration
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml $cli.podSecurityContext | nindent 8 }}
+      {{- with $cli.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $cli.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $cli.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      restartPolicy: Never
+      containers:
+        - name: database-migration
+          image: "{{ $cli.image.repository }}:{{ $cli.image.tag }}"
+          imagePullPolicy: {{ $cli.image.pullPolicy }}
+          securityContext:
+            {{- toYaml $cli.securityContext | nindent 12 }}
+          command: ["/bin/sh", "-ec"]
+          args:
+            - |
+              {{- if $migrations.existingDatabase.enabled }}
+              analytics-cli db bootstrap-existing --revision {{ $migrations.existingDatabase.baselineRevision | quote }}
+              {{- end }}
+              analytics-cli db upgrade --revision {{ $migrations.targetRevision | quote }}
+              analytics-cli db sync-policies
+          envFrom:
+            - secretRef:
+                name: {{ include "analytics.timescaledb-env-secret-name" . | quote }}
+          env:
+            {{- include "analytics.timescaledb-envs" . | nindent 12 }}
+            - name: GEORCHESTRA_ANALYTICS_CLI_CONFIG_FILE
+              value: /etc/georchestra/analytics/cli.yaml
+            {{- with $cli.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          resources:
+            {{- toYaml $cli.resources | nindent 12 }}
+          volumeMounts:
+            - name: cli-config
+              subPath: cli.yaml
+              mountPath: /etc/georchestra/analytics/cli.yaml
+            {{- with $cli.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+      volumes:
+        - name: cli-config
+          configMap:
+            name: {{ include "analytics.fullname" . }}-cli-config
+        {{- with $cli.extraVolumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+{{- end }}

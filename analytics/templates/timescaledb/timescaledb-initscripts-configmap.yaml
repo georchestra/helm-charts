@@ -1,5 +1,5 @@
 {{- $webapp := .Values.timescaledb -}}
-{{- if $webapp.builtin -}}
+{{- if and $webapp.builtin (not (and .Values.cli.enabled .Values.cli.migrations.enabled)) -}}
 
 apiVersion: v1
 kind: ConfigMap

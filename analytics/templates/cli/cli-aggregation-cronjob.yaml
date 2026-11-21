@@ -1,0 +1,86 @@
+{{- $cli := .Values.cli -}}
+{{- $aggregation := $cli.aggregation -}}
+{{- if and $cli.enabled $cli.migrations.enabled $aggregation.enabled -}}
+{{- $cronjobBase := include "analytics.fullname" . | trunc 34 | trimSuffix "-" -}}
+{{- $cronjobName := printf "%s-cli-aggregate-ogc" $cronjobBase -}}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ $cronjobName }}
+  labels:
+    {{- include "analytics.labels" . | nindent 4 }}
+    app.kubernetes.io/component: {{ $cronjobName }}
+spec:
+  concurrencyPolicy: Forbid
+  schedule: {{ $aggregation.schedule | quote }}
+  successfulJobsHistoryLimit: {{ $aggregation.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ $aggregation.failedJobsHistoryLimit }}
+  jobTemplate:
+    spec:
+      backoffLimit: {{ $aggregation.backoffLimit }}
+      template:
+        metadata:
+          annotations:
+            checksum/config: {{ include (print $.Template.BasePath "/cli/cli-configmap.yaml") . | sha256sum }}
+          labels:
+            {{- include "analytics.selectorLabels" . | nindent 12 }}
+            app.kubernetes.io/component: {{ $cronjobName }}
+        spec:
+          {{- include "analytics.revisionGate" . | nindent 10 }}
+          {{- with .Values.imagePullSecrets }}
+          imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          securityContext:
+            {{- toYaml $cli.podSecurityContext | nindent 12 }}
+          {{- with $cli.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with $cli.affinity }}
+          affinity:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with $cli.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          containers:
+            - name: analytics-cli-aggregate-ogc
+              image: "{{ $cli.image.repository }}:{{ $cli.image.tag }}"
+              imagePullPolicy: {{ $cli.image.pullPolicy }}
+              securityContext:
+                {{- toYaml $cli.securityContext | nindent 16 }}
+              command: ["analytics-cli"]
+              args:
+                - "aggregate-ogc"
+                - "--batch-size"
+                - {{ $aggregation.batchSize | quote }}
+              envFrom:
+                - secretRef:
+                    name: {{ include "analytics.timescaledb-env-secret-name" . | quote }}
+              env:
+                {{- include "analytics.timescaledb-envs" . | nindent 16 }}
+                - name: GEORCHESTRA_ANALYTICS_CLI_CONFIG_FILE
+                  value: /etc/georchestra/analytics/cli.yaml
+                {{- with $cli.extraEnv }}
+                {{- toYaml . | nindent 16 }}
+                {{- end }}
+              resources:
+                {{- toYaml $cli.resources | nindent 16 }}
+              volumeMounts:
+                - name: cli-config
+                  subPath: cli.yaml
+                  mountPath: /etc/georchestra/analytics/cli.yaml
+                {{- with $cli.extraVolumeMounts }}
+                {{- toYaml . | nindent 16 }}
+                {{- end }}
+          restartPolicy: Never
+          volumes:
+            - name: cli-config
+              configMap:
+                name: {{ include "analytics.fullname" . }}-cli-config
+            {{- with $cli.extraVolumes }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+{{- end }}
