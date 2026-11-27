@@ -1,0 +1,63 @@
+{{- /*
+Warn about passwords still set to the chart defaults. These defaults are
+public, so anyone with network access to the service can use them.
+*/ -}}
+{{- $warnings := list -}}
+{{- $webapps := .Values.georchestra.webapps -}}
+
+{{- if and $webapps.openldap.enabled (not .Values.ldap.existingSecret) (eq (toString .Values.ldap.adminPassword) "secret") -}}
+{{- $warnings = append $warnings "ldap.adminPassword is the default \"secret\"" -}}
+{{- end -}}
+
+{{- $db := .Values.database -}}
+{{- if not $db.auth.existingSecret -}}
+{{- if eq (toString $db.auth.password) "georchestra" -}}
+{{- $warnings = append $warnings "database.auth.password is the default \"georchestra\"" -}}
+{{- end -}}
+{{- if and $db.builtin (eq (toString $db.auth.postgresPassword) "georchestra") -}}
+{{- $warnings = append $warnings "database.auth.postgresPassword (PostgreSQL superuser) is the default \"georchestra\"" -}}
+{{- end -}}
+{{- end -}}
+{{- if and $db.builtin $db.primary $db.primary.initdb (eq (toString $db.primary.initdb.password) "georchestra") -}}
+{{- $warnings = append $warnings "database.primary.initdb.password is the default \"georchestra\"" -}}
+{{- end -}}
+{{- if and $db.geodata (not $db.geodata.auth.existingSecret) (eq (toString $db.geodata.auth.password) "geodata") -}}
+{{- $warnings = append $warnings "database.geodata.auth.password is the default \"geodata\"" -}}
+{{- end -}}
+{{- if and $db.datafeeder (not $db.datafeeder.auth.existingSecret) (eq (toString $db.datafeeder.auth.password) "datafeeder") -}}
+{{- $warnings = append $warnings "database.datafeeder.auth.password is the default \"datafeeder\"" -}}
+{{- end -}}
+
+{{- $gn := $webapps.geonetwork -}}
+{{- if and $gn.enabled $gn.elasticsearch.enabled (eq (toString $gn.elasticsearch.elasticPassword) "changeme") -}}
+{{- $warnings = append $warnings "georchestra.webapps.geonetwork.elasticsearch.elasticPassword is the default \"changeme\"" -}}
+{{- end -}}
+
+{{- $rabbitmq := .Values.rabbitmq -}}
+{{- if $rabbitmq.enabled -}}
+{{- if and (not $rabbitmq.auth.existingSecret) (eq (toString $rabbitmq.auth.password) "georchestra") -}}
+{{- $warnings = append $warnings "rabbitmq.auth.password is the default \"georchestra\"" -}}
+{{- end -}}
+{{- if and (not $rabbitmq.auth.host) (eq (toString $rabbitmq.auth.erlangCookie) "georchestra") -}}
+{{- $warnings = append $warnings "rabbitmq.auth.erlangCookie is the default \"georchestra\" (anyone who can reach the pod can run code in RabbitMQ)" -}}
+{{- end -}}
+{{- end -}}
+
+{{- $redis := .Values.redis -}}
+{{- if and $redis.enabled (not $redis.auth.existingSecret) (eq (toString $redis.auth.password) "georchestra") -}}
+{{- $warnings = append $warnings "redis.auth.password is the default \"georchestra\"" -}}
+{{- end -}}
+
+{{- if $warnings }}
+#################################################################################
+WARNING: the following values still use the chart's default passwords.
+They are public: set strong values (or use the corresponding existingSecret).
+{{- range $warnings }}
+  - {{ . }}
+{{- end }}
+
+Note: for the LDAP, PostgreSQL, Elasticsearch and RabbitMQ passwords, the value
+is only applied when the data is first initialised. On an existing installation,
+change the password in the service itself first, then update the chart values.
+#################################################################################
+{{- end -}}
