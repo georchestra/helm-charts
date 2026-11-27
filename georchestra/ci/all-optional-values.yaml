@@ -1,0 +1,9 @@
+# Values used by chart-testing (ct lint / ct install) in CI.
+# When this directory contains *-values.yaml files, ct uses them instead of the
+# default values only, so keep this file a superset of the defaults.
+
+redis:
+  enabled: true
+  auth:
+    # must not be the default "georchestra", the chart refuses it
+    password: ci-redis-password
