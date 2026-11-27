@@ -1,3 +1,6 @@
+# 1.24.0
+- Add a NOTES.txt that warns, after install/upgrade, about every password still set to its chart default (LDAP admin, PostgreSQL users and superuser, geodata, datafeeder, GeoNetwork Elasticsearch, RabbitMQ password and Erlang cookie, Redis). Warning only, nothing fails.
+
 # 1.22.1
 - fix-permissions-pvc cronjob: use `storage.<volume>.existingClaim` when set, instead of always mounting the chart-generated PVC names
 - fix-permissions-pvc cronjob: fix the command, it was wrapped in `sh -c` so only `ionice` was executed and the `chown` never ran. The nightly `chown -R 999:999` on the GeoServer/GeoNetwork volumes is now effective
