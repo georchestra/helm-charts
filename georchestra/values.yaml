@@ -554,6 +554,7 @@ redis:
     tag: 9.0.4-alpine
     pullPolicy: IfNotPresent
   auth:
+    # The default password is refused when redis is enabled: set a strong one, or use existingSecret
     password: georchestra
 #   host: redis  # for external redis - if set, builtin redis deployment is disabled
     port: "6379"

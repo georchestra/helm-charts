@@ -1,3 +1,8 @@
+# 1.23.0
+- Redis: add a `checksum/secret` annotation on the redis deployment so it is rolled out when the chart-managed secret changes (#246)
+- Redis: refuse to render when `redis.enabled` is true and `redis.auth.password` is empty or the default `georchestra` (unless `redis.auth.existingSecret` is used)
+  BREAKING CHANGE: if you enabled redis without changing the password, `helm upgrade` / ArgoCD sync now fails with "redis.auth.password must be set to a non-default value". Set `redis.auth.password` to a strong value or use `redis.auth.existingSecret`.
+
 # 1.22.1
 - fix-permissions-pvc cronjob: use `storage.<volume>.existingClaim` when set, instead of always mounting the chart-generated PVC names
 - fix-permissions-pvc cronjob: fix the command, it was wrapped in `sh -c` so only `ionice` was executed and the `chown` never ran. The nightly `chown -R 999:999` on the GeoServer/GeoNetwork volumes is now effective
