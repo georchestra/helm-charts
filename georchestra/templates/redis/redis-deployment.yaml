@@ -27,9 +27,14 @@ spec:
       labels:
         {{- include "georchestra.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: {{ include "georchestra.fullname" . }}-redis
-      {{- with $podAnnotations }}
+      {{- if or $podAnnotations (not $redis.auth.existingSecret) }}
       annotations:
+        {{- with $podAnnotations }}
         {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- if not $redis.auth.existingSecret }}
+        checksum/secret: {{ toYaml $redis.auth | sha256sum }}
+        {{- end }}
       {{- end }}
     spec:
       nodeSelector:
